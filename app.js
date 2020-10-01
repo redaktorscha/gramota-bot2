@@ -32,7 +32,7 @@ const app = async (query) => {
 }
 
 //app(word = '')
-app('кофе*машина').then(ret => console.log(ret));
+app('зао').then(ret => console.log(ret));
 //123
 //***
 //авокадо

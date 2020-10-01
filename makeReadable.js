@@ -10,7 +10,8 @@ const makeReadable = (str) => {
         str = insertLineBreaks(str);
     }
 
-    str = removeTags(insertAccents(str));
+    str = insertAccents(str);
+    str = removeTags(str);
     return str;
 
 }

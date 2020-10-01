@@ -1,8 +1,7 @@
 const doQuery = require('./doQuery');
-const processQueryResult = require('./processQueryResult');
+const processCurlResponse = require('./processCurlResponse');
 const isValid = require('./isValid');
 const logError = require('./logError');
-//require('dotenv').config(); URL here
 
 
 const app = async (query) => {
@@ -22,7 +21,7 @@ const app = async (query) => {
         try {
             //await doQuery(query).then(queryResult => console.log(queryResult.slice(0, 250)));
             const queryResult = await doQuery(query);
-            return processQueryResult(queryResult);
+            return processCurlResponse(queryResult);
         } catch (err) {
             console.log(err);
             logError(err);
@@ -33,7 +32,7 @@ const app = async (query) => {
 }
 
 //app(word = '')
-app('п').then(ret => console.log(ret));
+app('кофе*машина').then(ret => console.log(ret));
 //123
 //***
 //авокадо

@@ -1,9 +1,9 @@
 const doQuery = async (word) => {
 
-    //require('dotenv').config(); URL here
+    require('dotenv').config();
 
     const childProcess = require('child_process');
-    const URL = `http://gramota.ru/slovari/dic/?word=${word}`;
+    const URL = `${process.env.GRAMOTA_URL}${word}`; //rename!
     const logError = require('./logError');
 
 

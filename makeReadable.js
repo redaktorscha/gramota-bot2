@@ -10,10 +10,7 @@ const makeReadable = (str) => {
         str = insertLineBreaks(str);
     }
 
-    str = insertAccents(str);
-    str = removeTags(str);
-    return str;
-
+    return removeTags(insertAccents(str));
 }
 
 module.exports = makeReadable;

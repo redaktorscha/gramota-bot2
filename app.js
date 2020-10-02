@@ -17,7 +17,7 @@ const app = async (query) => {
 
     // console.log(botReply);
 
-    if (isValid(query)) {
+    if (isValid(query)) { //wrap it in async dictLookUp
         try {
             //await doQuery(query).then(queryResult => console.log(queryResult.slice(0, 250)));
             const queryResult = await doQuery(query);
@@ -32,7 +32,7 @@ const app = async (query) => {
 }
 
 //app(word = '')
-app('зао').then(ret => console.log(ret));
+app('чес*ный').then(ret => console.log(ret));
 //123
 //***
 //авокадо

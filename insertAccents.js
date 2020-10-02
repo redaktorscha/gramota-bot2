@@ -9,7 +9,7 @@ const insertAccents = (str) => {
         .map(el => {
             
             if (accents.hasOwnProperty(el[0])) {
-                el = accents[el[0]] + el.slice(1);
+                el = accents[el[0]] + el.slice(1);//only lowercase???
             }
             return el;
         })

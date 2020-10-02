@@ -19,4 +19,4 @@ const accents = {
     я: 'я\u0301',
 }
 
-module.exports = accents;
+module.exports = accents;//remove uppercase??

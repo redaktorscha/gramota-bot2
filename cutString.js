@@ -1,12 +1,18 @@
 const cutString = (str, closingTag) => {
     const substr = 'style="padding-left:50px">';
-    const cutIndexLeft = str.indexOf(substr) + substr.length;
+    const targetIndex = str.indexOf('style="padding-left:50px">');
 
-    str = str.slice(cutIndexLeft);
+    if (~targetIndex) {
+        const cutIndexLeft = targetIndex + substr.length;
 
-    const cutIndexRight = str.indexOf(closingTag);
-    
-    return str.slice(0, cutIndexRight);
+        str = str.slice(cutIndexLeft);
+
+        const cutIndexRight = str.indexOf(closingTag);
+
+        return str.slice(0, cutIndexRight);
+    }
+
+    return null;
 }
 
 module.exports = cutString;

@@ -19,7 +19,7 @@ const app = async (query) => {
     }
 }
 module.exports = app;
-//app(word = '')
+//app(word = 'алиса?').then(ret => console.log(ret));
 //app('чес*ный').then(ret => console.log(ret));
 //123
 //***

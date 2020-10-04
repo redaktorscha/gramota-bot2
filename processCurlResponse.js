@@ -36,6 +36,9 @@ const processCurlResponse = (htmlStr) => {
 
     } else {
         cutStr = cutString(htmlStr, '</div');
+        if (!cutStr) {
+            return 'Извините, слово не найдено';
+        }
     }
     
     cutStr = makeReadable(cutStr);

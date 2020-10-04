@@ -1,2 +1,3 @@
 2020-10-3 17:31:53:Error: ENOENT: no such file or directory, open './offset'
 2020-10-3 17:33:01:TypeError: Only absolute URLs are supported
+2020-10-4 21:06:23:ReferenceError: substr is not defined

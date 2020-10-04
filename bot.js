@@ -7,6 +7,8 @@ const API_PAGE = `${process.env.TELEGRAM_URL}${process.env.BOT_TOKEN}`;
 const app = require('./app');
 
 
+//const delay = promisify(setTimeout);
+
 /**
  * fetch telegram API (GET method)
  * @param {boolean} get getting messages or sending replies
@@ -115,4 +117,14 @@ const handleUpdates = async () => {
     }
 }
 
-handleUpdates();
+// (async () => {
+//     while (true) {
+//         await handleUpdates().catch(err => {
+//             console.log(err);
+//         });
+//         await new Promise(resolve => setTimeout(resolve, 5000));
+//     }
+
+// })()
+
+handleUpdates()

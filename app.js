@@ -5,21 +5,9 @@ const logError = require('./logError');
 
 
 const app = async (query) => {
-
-    // if (isValid(query)) {
-    //     console.log('Некорректный запрос');
-    //     return 'некорректный запрос';
-    // }
-
-    // const queryResult = await doQuery(query); //try catch
-
-    // const botReply = processQueryResult(queryResult);
-
-    // console.log(botReply);
-
+    //console.log(query);
     if (isValid(query)) { //wrap it in async dictLookUp
         try {
-            //await doQuery(query).then(queryResult => console.log(queryResult.slice(0, 250)));
             const queryResult = await doQuery(query);
             return processCurlResponse(queryResult);
         } catch (err) {
@@ -30,9 +18,9 @@ const app = async (query) => {
         return 'Некорректный запрос';
     }
 }
-
+module.exports = app;
 //app(word = '')
-app('чес*ный').then(ret => console.log(ret));
+//app('чес*ный').then(ret => console.log(ret));
 //123
 //***
 //авокадо

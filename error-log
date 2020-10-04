@@ -1,1 +1,2 @@
-2020-10-1 4:44:26:ReferenceError: cuttedStr is not defined
+2020-10-3 17:31:53:Error: ENOENT: no such file or directory, open './offset'
+2020-10-3 17:33:01:TypeError: Only absolute URLs are supported

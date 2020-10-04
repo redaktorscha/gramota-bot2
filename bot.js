@@ -1,106 +1,108 @@
 require('dotenv').config();
 const fetch = require('node-fetch');
-//const childProcess = require('child_process');
 const logError = require('./logError');
 const fs = require('fs');
+const TelegramAPIError = require('./customErrors');
 const API_PAGE = `${process.env.TELEGRAM_URL}${process.env.BOT_TOKEN}`;
+const app = require('./app');
 
-const getUpdates = async () => { //можно сделать один метод для получения и отправки
 
-    //const API_PAGE = `${process.env.TELEGRAM_URL}${process.env.BOT_TOKEN}/getUpdates`;
-    let offset = Number(fs.readFileSync('./offset', 'utf-8'));
+/**
+ * fetch telegram API (GET method)
+ * @param {boolean} get getting messages or sending replies
+ * @param {string} url url query string
+ * @returns {Promise} returns update obj from API
+ */
+const getUpdates = async (get, url) => {
 
-    const response = await fetch(`${API_PAGE}/getUpdates?offset=${offset + 1}`); //getUpdates?offset="
-    //const response = await fetch(`${API_PAGE}/getUpdates`);
-    if (!response.ok) {
-        //throw new Error(response.statusText);
-        console.log(response.statusText);
+    const responseAPI = await fetch(url);
+
+    if (!responseAPI.ok) {
+        console.log(responseAPI.statusText);
+        throw new TelegramAPIError(responseAPI.statusText);
     };
-    const {
-        result
-    } = await response.json();
-    //console.log(result);
-    return result;
+
+    if (get) {
+        const {
+            result
+        } = await responseAPI.json();
+        return result; //arr of users info, msgs etc
+
+    } else {
+        return; //return true??
+    }
 }
 
+/**
+ * compile bot's reply depending on user command
+ * @param {Object} user user info
+ * @returns {Promise} string
+ * 
+ */
+const compileReply = async (user) => {
+    const {
+        userName,
+        incomingMsg
+    } = user;
 
-const replyMessages = async (userId, userName, incomingMsg) => { //compileReply & replyMessages
     let botResponse = '';
-    if (incomingMsg === '/start') {
+
+    if (incomingMsg === '/start') { //start command reaction
         botResponse = `Hello, ${userName}!`
-    } else if (incomingMsg === '/help') {
-        botResponse = 'Сейчас помогу!'
-    } else if (!incomingMsg) {
+    } else if (incomingMsg === '/help') { //help command reaction
+        botResponse = 'let me help you'
+    } else if (incomingMsg === '/sticker') { //sticker reaction
         botResponse = '🙂';
     } else {
-        botResponse = `Ищем ${incomingMsg}`;
+        botResponse = await app(incomingMsg);
+        //botResponse = `Looking for ${incomingMsg}...`; //getting query result from gramota.ru
     }
-
-    const response = await fetch(`${API_PAGE}/sendMessage?chat_id=${userId}&text=&${botResponse}`);
-    if (!response.ok) {
-        //throw new Error(response.statusText);
-        console.log(response.statusText);
-    };
-    const {
-        result
-    } = await response.json();
-    //console.log(result);
-    return result;
-
+    return botResponse; //no empty msg?
 }
 
 
-// const getMessages = async () => {
-
-//     const updates = await getUpdates();
-//     //console.log(updates[updates.length-1].message.chat.id);
-//     return updates;
-//     // updates.forEach(item => {
-//     //     const {
-//     //         message
-//     //     } = item;
-
-
-//     //     // if (message.sticker) {
-//     //     //     console.log(message.sticker);
-//     //     // } else {
-//     //     //     console.log(`${message.from.first_name} said: ${message.text}`);
-//     //     // }        
-
-//     // })
-
-// }
-
-const handleUpdates = async () => { //userName, type, text
+/**
+ * bot's handler for getting/sending msgs
+ */
+const handleUpdates = async () => {
 
     try {
-        const newMsgs = await getUpdates();
+        let offset = Number(fs.readFileSync('./offset', 'utf-8')) || null; //used for getting new msgs only
+
+        const urlQueryStringGet = `${API_PAGE}/getUpdates?offset=${offset + 1}`; //get msgs
+
+        const newMsgs = await getUpdates(true, urlQueryStringGet);
 
         if (newMsgs.length) {
             console.log(`got ${newMsgs.length} new updates`);
-            let offset = null;
-            const replies = newMsgs.map(msg => {
+
+            const replies = newMsgs.map(async msg => { //arr of promises
                 offset = msg.update_id;
                 const {
                     message
                 } = msg;
-                const usrName = message.from.first_name;
-                const text = message.text || '/sticker';
-                const chatId = message.chat.id;
-                console.log(usrName, text, chatId);
-                return replyMessages(chatId, usrName, text) //userId, userName, incomingMsg
 
+                const botResponse = await compileReply({
+                    userName: message.from.first_name,
+                    incomingMsg: message.text || '/sticker'
+                }).catch(err => {
+                    console.log(err);
+                    throw new Error(err);
+                }); //????
+
+                const urlQueryStringSend = `${API_PAGE}/sendMessage?chat_id=${message.chat.id}&text=${encodeURI(botResponse)}&parse_mode=HTML`; //send msgs
+
+                return getUpdates(false, urlQueryStringSend);
             });
+
             Promise.all(replies)
-                .then(rets => {
-                    rets.forEach(ret => console.log(ret.status))
-                })
                 .catch(err => {
                     console.log(err);
-                    logError(err);
+                    throw new Error(err);
                 });
 
-            fs.writeFileSync('./offset', offset); //console.log(offset);
+            fs.writeFileSync('./offset', offset); // new offset (last user obj);
+
         } else {
             console.log('no new msgs');
             return;
@@ -111,8 +113,6 @@ const handleUpdates = async () => { //userName, type, text
         console.log(err);
         logError(err);
     }
-
-
 }
 
 handleUpdates();

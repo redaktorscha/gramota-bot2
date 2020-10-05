@@ -1,6 +1,6 @@
 const {
     htmlTags
-} = require('./regexps');
+} = require('../tools/regexps');
 
 const removeTags = (html) => {
     return html.replace(htmlTags, '');

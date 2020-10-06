@@ -1,17 +1,3 @@
-//app(method) if polling => await handleUpdates else await server().then handleUpdates
-// const https = require('https'); //https
-// const fs = require('fs');
-
-// const options = {
-//   key: fs.readFileSync('key.pem'),
-//   cert: fs.readFileSync('cert.pem')
-// };
-
-// https.createServer(options, function (req, res) {
-//   res.writeHead(200);
-//   res.end("hello world\n");
-// }).listen(8000);
-
 const http = require('http'); //module server.js
 //const handleUpdates = require('./src/bot/handleUpdates');
 //$ npm install --save body-parser
@@ -19,9 +5,9 @@ const http = require('http'); //module server.js
 // const {result} = bodyParser.json() //
 const {
     TelegramAPIError
-} = require('./src/tools/customErrors');
+} = require('../tools/customErrors');
 
-
+const logError = require('../tools/logError');
 
 const server = async () => {
     const servHTTP = http.createServer((request, response) => {
@@ -42,7 +28,7 @@ const server = async () => {
         });
 
         if (request.method == 'POST') {
-            if (url === '/mysecretpath') { //bot token
+            if (url === '/mysecretpath') { //bot token here
                 console.log('POST from Telegram API');
                 let body = '';
                 request.on('data', chunk => {
@@ -90,22 +76,5 @@ const server = async () => {
     console.log(`Listening at http://${host}:${port}`);
 }
 
-const handleUpdatesPolling = require('./src/bot/handleUpdatesPolling');
 
-(async () => {
-    while (true) {
-        await handleUpdatesPolling().catch(err => {
-            console.log(err);
-        });
-        await new Promise(resolve => setTimeout(resolve, 5000));
-    }
-
-})()
-
-
-// (async () => {
-//     await server().catch(error => {
-//         console.log(error)
-//     })
-
-// })()
+module.exports = server;

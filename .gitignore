@@ -5,3 +5,5 @@ node_modules/
 telapi
 offset
 src/tools/getOffset.js
+*.pem
+*.key

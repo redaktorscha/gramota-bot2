@@ -19,7 +19,7 @@ const compileReply = async (user) => {
     botMsgs['/start'] = userName;
 
     let botResponse = '';
-    if (!incomingMsg) {
+    if (!incomingMsg) { //isValid here!!!!!!! + check for emoji => answer with smile??
         botResponse = errorBotText;
     } else if (botMsgs.hasOwnProperty(incomingMsg)) {
         botResponse = botMsgs[incomingMsg];
@@ -35,12 +35,8 @@ const compileReply = async (user) => {
     } else {
         botResponse = await dictLookUp(incomingMsg);//getting query result from gramota.ru (do spellchecking)       
     }
-    return botResponse; //no empty msg?
+    //return botResponse += `\n Простите, моя разработчица меня еще отлаживает. Я буду готов через пару недель. Сейчас вам поможет Орфобот Мефодий 2: @russian_spelling_bot`; //no empty msg?
+    return botResponse;
 }
 
 module.exports = compileReply
-
-
-
-// {a:{b, c}} = obj
-//'❤️', '🙂'

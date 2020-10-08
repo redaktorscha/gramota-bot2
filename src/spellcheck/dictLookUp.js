@@ -12,12 +12,12 @@ const dictLookUp = async (query) => {
             const queryResult = await doQuery(query);
 
             if (!queryResult) {
-                return errorGramotaText;
+                return errorGramotaText; //?????
             }
             return processCurlResponse(queryResult);
             
         } catch (err) {
-            console.log(err);
+            console.log(err); //return 'Простите, не удалось отыскать'
             logError(err);
         }
     } else {

@@ -50,10 +50,10 @@ const server = async () => {
                     body.push(chunk);
                 });
                 request.on('end', async () => {
-                    console.log('body: ' + body.toString());
+                    //console.log('body: ' + body.toString());
                     try {
                         const parsedBody = JSON.parse(body.join(''));
-                        console.log('body parsed: ', parsedBody);
+                        //console.log('body parsed: ', parsedBody);
                         response.writeHead(200);
                         response.end();
                         const newMsgs = Object.keys(parsedBody).length;

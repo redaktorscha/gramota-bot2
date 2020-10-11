@@ -81,3 +81,293 @@ iconv: недопустимая входная последовательнос�
     at ChildProcess.emit (events.js:315:20)
     at maybeClose (internal/child_process.js:1021:16)
     at Process.ChildProcess._handle.onexit (internal/child_process.js:286:5)
+2020-10-11 3:16:18:Error: TypeError: Cannot read property 'test' of undefined
+    at /home/masha/Work/gramotaBot2/src/bot/handleUpdatesWebhook.js:25:19
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+    at async handleUpdatesWebhook (/home/masha/Work/gramotaBot2/src/bot/handleUpdatesWebhook.js:20:29)
+    at async IncomingMessage.<anonymous> (/home/masha/Work/gramotaBot2/src/bot/server.js:62:29)
+2020-10-11 3:18:39:GramotaRuError: Command failed: curl http://gramota.ru/slovari/dic/?word=😢 | iconv -f windows-1251 -t utf-8
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 18600    0 18600    0     0   208k      0 --:--:-- --:--:-- --:--:--  208k
+iconv: недопустимая входная последовательность в позиции 13483
+
+    at /home/masha/Work/gramotaBot2/src/spellcheck/doQuery.js:15:26
+    at ChildProcess.exithandler (child_process.js:310:5)
+    at ChildProcess.emit (events.js:315:20)
+    at maybeClose (internal/child_process.js:1021:16)
+    at Process.ChildProcess._handle.onexit (internal/child_process.js:286:5)
+2020-10-11 3:18:39:Error: Command failed: curl http://gramota.ru/slovari/dic/?word=😢 | iconv -f windows-1251 -t utf-8
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 18600    0 18600    0     0   208k      0 --:--:-- --:--:-- --:--:--  208k
+iconv: недопустимая входная последовательность в позиции 13483
+
+    at ChildProcess.exithandler (child_process.js:303:12)
+    at ChildProcess.emit (events.js:315:20)
+    at maybeClose (internal/child_process.js:1021:16)
+    at Process.ChildProcess._handle.onexit (internal/child_process.js:286:5)
+2020-10-11 3:22:35:GramotaRuError: Command failed: curl http://gramota.ru/slovari/dic/?word=😀 | iconv -f windows-1251 -t utf-8
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 18600    0 18600    0     0   342k      0 --:--:-- --:--:-- --:--:--  349k
+iconv: недопустимая входная последовательность в позиции 13483
+
+    at /home/masha/Work/gramotaBot2/src/spellcheck/doQuery.js:15:26
+    at ChildProcess.exithandler (child_process.js:310:5)
+    at ChildProcess.emit (events.js:315:20)
+    at maybeClose (internal/child_process.js:1021:16)
+    at Socket.<anonymous> (internal/child_process.js:443:11)
+    at Socket.emit (events.js:315:20)
+    at Pipe.<anonymous> (net.js:674:12)
+2020-10-11 3:22:35:Error: Command failed: curl http://gramota.ru/slovari/dic/?word=😀 | iconv -f windows-1251 -t utf-8
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 18600    0 18600    0     0   342k      0 --:--:-- --:--:-- --:--:--  349k
+iconv: недопустимая входная последовательность в позиции 13483
+
+    at ChildProcess.exithandler (child_process.js:303:12)
+    at ChildProcess.emit (events.js:315:20)
+    at maybeClose (internal/child_process.js:1021:16)
+    at Socket.<anonymous> (internal/child_process.js:443:11)
+    at Socket.emit (events.js:315:20)
+    at Pipe.<anonymous> (net.js:674:12)
+2020-10-11 3:26:40:GramotaRuError: Command failed: curl http://gramota.ru/slovari/dic/?word=😘 | iconv -f windows-1251 -t utf-8
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 18600    0 18600    0     0   336k      0 --:--:-- --:--:-- --:--:--  336k
+iconv: недопустимая входная последовательность в позиции 13483
+
+    at /home/masha/Work/gramotaBot2/src/spellcheck/doQuery.js:15:26
+    at ChildProcess.exithandler (child_process.js:310:5)
+    at ChildProcess.emit (events.js:315:20)
+    at maybeClose (internal/child_process.js:1021:16)
+    at Process.ChildProcess._handle.onexit (internal/child_process.js:286:5)
+2020-10-11 3:26:40:Error: Command failed: curl http://gramota.ru/slovari/dic/?word=😘 | iconv -f windows-1251 -t utf-8
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 18600    0 18600    0     0   336k      0 --:--:-- --:--:-- --:--:--  336k
+iconv: недопустимая входная последовательность в позиции 13483
+
+    at ChildProcess.exithandler (child_process.js:303:12)
+    at ChildProcess.emit (events.js:315:20)
+    at maybeClose (internal/child_process.js:1021:16)
+    at Process.ChildProcess._handle.onexit (internal/child_process.js:286:5)
+2020-10-11 3:28:08:GramotaRuError: Command failed: curl http://gramota.ru/slovari/dic/?word=😟 | iconv -f windows-1251 -t utf-8
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 18600    0 18600    0     0   307k      0 --:--:-- --:--:-- --:--:--  313k
+iconv: недопустимая входная последовательность в позиции 13483
+
+    at /home/masha/Work/gramotaBot2/src/spellcheck/doQuery.js:15:26
+    at ChildProcess.exithandler (child_process.js:310:5)
+    at ChildProcess.emit (events.js:315:20)
+    at maybeClose (internal/child_process.js:1021:16)
+    at Process.ChildProcess._handle.onexit (internal/child_process.js:286:5)
+2020-10-11 3:28:08:Error: Command failed: curl http://gramota.ru/slovari/dic/?word=😟 | iconv -f windows-1251 -t utf-8
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 18600    0 18600    0     0   307k      0 --:--:-- --:--:-- --:--:--  313k
+iconv: недопустимая входная последовательность в позиции 13483
+
+    at ChildProcess.exithandler (child_process.js:303:12)
+    at ChildProcess.emit (events.js:315:20)
+    at maybeClose (internal/child_process.js:1021:16)
+    at Process.ChildProcess._handle.onexit (internal/child_process.js:286:5)
+2020-10-11 3:32:27:GramotaRuError: Command failed: curl http://gramota.ru/slovari/dic/?word=😢 | iconv -f windows-1251 -t utf-8
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 18600    0 18600    0     0   336k      0 --:--:-- --:--:-- --:--:--  336k
+iconv: недопустимая входная последовательность в позиции 13483
+
+    at /home/masha/Work/gramotaBot2/src/spellcheck/doQuery.js:15:26
+    at ChildProcess.exithandler (child_process.js:310:5)
+    at ChildProcess.emit (events.js:315:20)
+    at maybeClose (internal/child_process.js:1021:16)
+    at Process.ChildProcess._handle.onexit (internal/child_process.js:286:5)
+2020-10-11 3:32:27:Error: Command failed: curl http://gramota.ru/slovari/dic/?word=😢 | iconv -f windows-1251 -t utf-8
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 18600    0 18600    0     0   336k      0 --:--:-- --:--:-- --:--:--  336k
+iconv: недопустимая входная последовательность в позиции 13483
+
+    at ChildProcess.exithandler (child_process.js:303:12)
+    at ChildProcess.emit (events.js:315:20)
+    at maybeClose (internal/child_process.js:1021:16)
+    at Process.ChildProcess._handle.onexit (internal/child_process.js:286:5)
+2020-10-11 3:32:37:GramotaRuError: Command failed: curl http://gramota.ru/slovari/dic/?word=😐 | iconv -f windows-1251 -t utf-8
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 18600    0 18600    0     0   211k      0 --:--:-- --:--:-- --:--:--  211k
+iconv: недопустимая входная последовательность в позиции 13483
+
+    at /home/masha/Work/gramotaBot2/src/spellcheck/doQuery.js:15:26
+    at ChildProcess.exithandler (child_process.js:310:5)
+    at ChildProcess.emit (events.js:315:20)
+    at maybeClose (internal/child_process.js:1021:16)
+    at Process.ChildProcess._handle.onexit (internal/child_process.js:286:5)
+2020-10-11 3:32:37:Error: Command failed: curl http://gramota.ru/slovari/dic/?word=😐 | iconv -f windows-1251 -t utf-8
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 18600    0 18600    0     0   211k      0 --:--:-- --:--:-- --:--:--  211k
+iconv: недопустимая входная последовательность в позиции 13483
+
+    at ChildProcess.exithandler (child_process.js:303:12)
+    at ChildProcess.emit (events.js:315:20)
+    at maybeClose (internal/child_process.js:1021:16)
+    at Process.ChildProcess._handle.onexit (internal/child_process.js:286:5)
+2020-10-11 3:32:55:GramotaRuError: Command failed: curl http://gramota.ru/slovari/dic/?word=😕 | iconv -f windows-1251 -t utf-8
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 18600    0 18600    0     0   227k      0 --:--:-- --:--:-- --:--:--  227k
+iconv: недопустимая входная последовательность в позиции 13483
+
+    at /home/masha/Work/gramotaBot2/src/spellcheck/doQuery.js:15:26
+    at ChildProcess.exithandler (child_process.js:310:5)
+    at ChildProcess.emit (events.js:315:20)
+    at maybeClose (internal/child_process.js:1021:16)
+    at Socket.<anonymous> (internal/child_process.js:443:11)
+    at Socket.emit (events.js:315:20)
+    at Pipe.<anonymous> (net.js:674:12)
+2020-10-11 3:32:55:Error: Command failed: curl http://gramota.ru/slovari/dic/?word=😕 | iconv -f windows-1251 -t utf-8
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 18600    0 18600    0     0   227k      0 --:--:-- --:--:-- --:--:--  227k
+iconv: недопустимая входная последовательность в позиции 13483
+
+    at ChildProcess.exithandler (child_process.js:303:12)
+    at ChildProcess.emit (events.js:315:20)
+    at maybeClose (internal/child_process.js:1021:16)
+    at Socket.<anonymous> (internal/child_process.js:443:11)
+    at Socket.emit (events.js:315:20)
+    at Pipe.<anonymous> (net.js:674:12)
+2020-10-11 4:00:03:GramotaRuError: Command failed: curl http://gramota.ru/slovari/dic/?word=😐 | iconv -f windows-1251 -t utf-8
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 18600    0 18600    0     0   172k      0 --:--:-- --:--:-- --:--:--  172k
+iconv: недопустимая входная последовательность в позиции 13483
+
+    at /home/masha/Work/gramotaBot2/src/spellcheck/doQuery.js:15:26
+    at ChildProcess.exithandler (child_process.js:310:5)
+    at ChildProcess.emit (events.js:315:20)
+    at maybeClose (internal/child_process.js:1021:16)
+    at Socket.<anonymous> (internal/child_process.js:443:11)
+    at Socket.emit (events.js:315:20)
+    at Pipe.<anonymous> (net.js:674:12)
+2020-10-11 4:00:03:Error: Command failed: curl http://gramota.ru/slovari/dic/?word=😐 | iconv -f windows-1251 -t utf-8
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 18600    0 18600    0     0   172k      0 --:--:-- --:--:-- --:--:--  172k
+iconv: недопустимая входная последовательность в позиции 13483
+
+    at ChildProcess.exithandler (child_process.js:303:12)
+    at ChildProcess.emit (events.js:315:20)
+    at maybeClose (internal/child_process.js:1021:16)
+    at Socket.<anonymous> (internal/child_process.js:443:11)
+    at Socket.emit (events.js:315:20)
+    at Pipe.<anonymous> (net.js:674:12)
+2020-10-11 4:25:30:GramotaRuError: Command failed: curl http://gramota.ru/slovari/dic/?word=😐 | iconv -f windows-1251 -t utf-8
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 18600    0 18600    0     0   229k      0 --:--:-- --:--:-- --:--:--  229k
+iconv: недопустимая входная последовательность в позиции 13483
+
+    at /home/masha/Work/gramotaBot2/src/spellcheck/doQuery.js:15:26
+    at ChildProcess.exithandler (child_process.js:310:5)
+    at ChildProcess.emit (events.js:315:20)
+    at maybeClose (internal/child_process.js:1021:16)
+    at Socket.<anonymous> (internal/child_process.js:443:11)
+    at Socket.emit (events.js:315:20)
+    at Pipe.<anonymous> (net.js:674:12)
+2020-10-11 4:25:30:Error: Command failed: curl http://gramota.ru/slovari/dic/?word=😐 | iconv -f windows-1251 -t utf-8
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 18600    0 18600    0     0   229k      0 --:--:-- --:--:-- --:--:--  229k
+iconv: недопустимая входная последовательность в позиции 13483
+
+    at ChildProcess.exithandler (child_process.js:303:12)
+    at ChildProcess.emit (events.js:315:20)
+    at maybeClose (internal/child_process.js:1021:16)
+    at Socket.<anonymous> (internal/child_process.js:443:11)
+    at Socket.emit (events.js:315:20)
+    at Pipe.<anonymous> (net.js:674:12)
+2020-10-11 4:26:09:GramotaRuError: Command failed: curl http://gramota.ru/slovari/dic/?word=😊 | iconv -f windows-1251 -t utf-8
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 18600    0 18600    0     0   356k      0 --:--:-- --:--:-- --:--:--  356k
+iconv: недопустимая входная последовательность в позиции 13483
+
+    at /home/masha/Work/gramotaBot2/src/spellcheck/doQuery.js:15:26
+    at ChildProcess.exithandler (child_process.js:310:5)
+    at ChildProcess.emit (events.js:315:20)
+    at maybeClose (internal/child_process.js:1021:16)
+    at Socket.<anonymous> (internal/child_process.js:443:11)
+    at Socket.emit (events.js:315:20)
+    at Pipe.<anonymous> (net.js:674:12)
+2020-10-11 4:26:09:Error: Command failed: curl http://gramota.ru/slovari/dic/?word=😊 | iconv -f windows-1251 -t utf-8
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 18600    0 18600    0     0   356k      0 --:--:-- --:--:-- --:--:--  356k
+iconv: недопустимая входная последовательность в позиции 13483
+
+    at ChildProcess.exithandler (child_process.js:303:12)
+    at ChildProcess.emit (events.js:315:20)
+    at maybeClose (internal/child_process.js:1021:16)
+    at Socket.<anonymous> (internal/child_process.js:443:11)
+    at Socket.emit (events.js:315:20)
+    at Pipe.<anonymous> (net.js:674:12)
+2020-10-11 4:27:06:GramotaRuError: Command failed: curl http://gramota.ru/slovari/dic/?word=😊 | iconv -f windows-1251 -t utf-8
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 18600    0 18600    0     0   336k      0 --:--:-- --:--:-- --:--:--  336k
+iconv: недопустимая входная последовательность в позиции 13483
+
+    at /home/masha/Work/gramotaBot2/src/spellcheck/doQuery.js:15:26
+    at ChildProcess.exithandler (child_process.js:310:5)
+    at ChildProcess.emit (events.js:315:20)
+    at maybeClose (internal/child_process.js:1021:16)
+    at Socket.<anonymous> (internal/child_process.js:443:11)
+    at Socket.emit (events.js:315:20)
+    at Pipe.<anonymous> (net.js:674:12)
+2020-10-11 4:27:06:Error: Command failed: curl http://gramota.ru/slovari/dic/?word=😊 | iconv -f windows-1251 -t utf-8
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 18600    0 18600    0     0   336k      0 --:--:-- --:--:-- --:--:--  336k
+iconv: недопустимая входная последовательность в позиции 13483
+
+    at ChildProcess.exithandler (child_process.js:303:12)
+    at ChildProcess.emit (events.js:315:20)
+    at maybeClose (internal/child_process.js:1021:16)
+    at Socket.<anonymous> (internal/child_process.js:443:11)
+    at Socket.emit (events.js:315:20)
+    at Pipe.<anonymous> (net.js:674:12)
+2020-10-11 4:33:39:Error: TypeError: Cannot read property 'join' of null
+    at /home/masha/Work/gramotaBot2/src/bot/handleUpdatesWebhook.js:25:19
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+    at async handleUpdatesWebhook (/home/masha/Work/gramotaBot2/src/bot/handleUpdatesWebhook.js:20:29)
+    at async IncomingMessage.<anonymous> (/home/masha/Work/gramotaBot2/src/bot/server.js:62:29)
+2020-10-11 5:01:54:Error: TypeError: Cannot read property 'length' of null
+    at /home/masha/Work/gramotaBot2/src/bot/handleUpdatesWebhook.js:25:19
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+    at async handleUpdatesWebhook (/home/masha/Work/gramotaBot2/src/bot/handleUpdatesWebhook.js:20:29)
+    at async IncomingMessage.<anonymous> (/home/masha/Work/gramotaBot2/src/bot/server.js:62:29)
+2020-10-11 5:10:45:Error: TypeError: Assignment to constant variable.
+    at /home/masha/Work/gramotaBot2/src/bot/handleUpdatesWebhook.js:25:19
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+    at async handleUpdatesWebhook (/home/masha/Work/gramotaBot2/src/bot/handleUpdatesWebhook.js:20:29)
+    at async IncomingMessage.<anonymous> (/home/masha/Work/gramotaBot2/src/bot/server.js:62:29)
+2020-10-11 5:11:57:Error: TypeError: query.match is not a function
+    at /home/masha/Work/gramotaBot2/src/bot/handleUpdatesWebhook.js:25:19
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+    at async handleUpdatesWebhook (/home/masha/Work/gramotaBot2/src/bot/handleUpdatesWebhook.js:20:29)
+    at async IncomingMessage.<anonymous> (/home/masha/Work/gramotaBot2/src/bot/server.js:62:29)
+2020-10-11 5:12:14:Error: TypeError: query.match is not a function
+    at /home/masha/Work/gramotaBot2/src/bot/handleUpdatesWebhook.js:25:19
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+    at async handleUpdatesWebhook (/home/masha/Work/gramotaBot2/src/bot/handleUpdatesWebhook.js:20:29)
+    at async IncomingMessage.<anonymous> (/home/masha/Work/gramotaBot2/src/bot/server.js:62:29)
+2020-10-11 5:14:54:Error: TypeError: query.match is not a function
+    at /home/masha/Work/gramotaBot2/src/bot/handleUpdatesWebhook.js:25:19
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+    at async handleUpdatesWebhook (/home/masha/Work/gramotaBot2/src/bot/handleUpdatesWebhook.js:20:29)
+    at async IncomingMessage.<anonymous> (/home/masha/Work/gramotaBot2/src/bot/server.js:62:29)

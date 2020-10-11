@@ -1,3 +1,20 @@
+const logError = require('./src/tools/logError');
+const server = require('./src/bot/server');
+
+(async () => {
+    await server().catch(err => {
+        console.log(err);
+        logError(err);
+    })
+})()
+
+
+
+
+
+
+
+
 //const handleUpdatesPolling = require('./src/bot/handleUpdatesPolling'); //if 'polling' method
 // (async () => {
 //     while (true) {
@@ -8,15 +25,3 @@
 //     }
 
 // })()
-
-
-
-const logError = require('./src/tools/logError');
-const server = require('./src/bot/server');
-
-(async () => {
-    await server().catch(err => {
-        console.log(err);
-        logError(err);
-    })
-})()

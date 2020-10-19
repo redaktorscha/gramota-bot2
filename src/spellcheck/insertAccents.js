@@ -1,5 +1,13 @@
+/**
+ * @module src/spellcheck/insertAccents
+ */
 const accents = require('./accents');
 
+/**
+ * inserts accent marks
+ * @param {string} str - html string
+ * @returns {string} - html string
+ */
 const insertAccents = (str) => {
 
     return str

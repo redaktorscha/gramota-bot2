@@ -1,5 +1,8 @@
+/** 
+ * @module src/bot/compileReply
+ */
+
 const dictLookUp = require('../spellcheck/dictLookUp');
-const isValid = require('../spellcheck/validateQuery.js');
 const botMsgs = require('./botMsgs');
 const {
     errors: {
@@ -11,8 +14,8 @@ const validateQuery = require('../spellcheck/validateQuery.js');
 
 /**
  * compile bot's reply depending on user command
- * @param {Object} user user info
- * @returns {Promise} string
+ * @param {Object} user - user info
+ * @returns {Promise<string>} - bot reply message
  * 
  */
 
@@ -29,7 +32,7 @@ const compileReply = async (user) => {
     } = botMsgs;
 
 
-    botMsgs['/start'] = userName;
+    botMsgs['/start'] = userName; //set username 
 
     let botResponse = '';
     if (!incomingMsg) {
@@ -38,12 +41,6 @@ const compileReply = async (user) => {
         botResponse = botMsgs[incomingMsg];
 
     } else {
-        // if (isValid(incomingMsg)) { //query validation
-        //     botResponse = await dictLookUp(incomingMsg); //getting query result from gramota.ru (do spellchecking)   
-        // } else {
-        //     botResponse = inCorrect;
-        // }
-
         const checkedMsg = validateQuery(incomingMsg);
         if (checkedMsg) {
             botResponse = await dictLookUp(checkedMsg); //getting query result from gramota.ru (do spellchecking)  
@@ -54,4 +51,4 @@ const compileReply = async (user) => {
     return botResponse;
 }
 
-module.exports = compileReply
+module.exports = compileReply;

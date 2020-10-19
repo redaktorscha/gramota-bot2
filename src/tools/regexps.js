@@ -1,9 +1,19 @@
+/**
+ * @module src/tools/regexps
+ */
+
+/**
+ * @typedef {Object} regexps
+ * @property {RegExp} containsCyrillic - for fixing a bug at the dict page
+ * @property {RegExp} onlyAsteriks - query consisting of asterisks only isn't valid   
+ * @property {RegExp} htmlTags - used for removing html tags
+ * @property {RegExp} allowedChars - allowed characters for the query
+ */
 const regexps = {
-    containsCyrillic: /\p{sc=Cyrillic}/u, //for fixing a bug at the dict page
-    onlyAsteriks: /^\*+$/,                  //query consisting of asterisks only isn't valid
-    //latinNumbersSpecChars: /[a-z]|[A-Z]|[0-9]|[-!$%^&()_+|~=`{}\[\]:";'<>,.\/]/,//latin chars, numbers and special chars, except asterisks and '?' cause you can use them in the query   
-    htmlTags: /<[^>]*>|<*>/g, //for removing html tags
-    allowedChars: /[а-яё*?\s]+/ig, //allowed characters for the query
+    containsCyrillic: /\p{sc=Cyrillic}/u,
+    onlyAsteriks: /^\*+$/,
+    htmlTags: /<[^>]*>|<*>/g,
+    allowedChars: /[а-яё*?]+/ig,
 }
 
 module.exports = regexps;

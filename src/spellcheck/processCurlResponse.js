@@ -1,3 +1,7 @@
+/**
+ * @module src/spellcheck/processCurlResponse
+ */
+
 const {
     containsCyrillic
 } = require('../tools/regexps');
@@ -18,7 +22,11 @@ const {
 const cutString = require('./cutString');
 const makeReadable = require('./makeReadable');
 
-
+/**
+ * parse html, find and process query result
+ * @param {string} htmlStr - curl request result (html)
+ * @returns {string} - readable query result
+ */
 const processCurlResponse = (htmlStr) => {
 
     let reply = '';

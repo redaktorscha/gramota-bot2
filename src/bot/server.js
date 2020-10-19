@@ -1,20 +1,31 @@
+/**
+ * @module src/bot/server
+ */
+
 const https = require('https'); //module server.js
 require('dotenv').config();
 fs = require('fs');
 const path = require('path');
+const log = require('../tools/log');
 const handleUpdatesWebhook = require('./handleUpdatesWebhook');
 
-// https.createServer(options, function (req, res) {
+
 const {
     TelegramAPIError
 } = require('../tools/customErrors');
 
 const logError = require('../tools/logError');
 
+
+/**
+ * node https server
+ * @returns {Promise<void>}
+ */
 const server = async () => {
+    
     /**
-     * 
-     * @param {string} fileName 
+     * @param {string} fileName
+     * @returns {string} - path to SSL key or certificate
      */
     const pathToPem = (fileName) => path.join(__dirname, '..', '/..', fileName);
 
@@ -27,7 +38,6 @@ const server = async () => {
         const url = request.url;
 
         request.on('error', err => {
-            console.log(err);
             response.statusCode = 400;
             logError(err);
             response.end('400: Bad Request');
@@ -35,40 +45,36 @@ const server = async () => {
         });
 
         response.on('error', err => {
-            console.log(err);
             return;
         });
 
         if (request.method == 'POST') { //POST from Telegram
             const contentType = request.headers['content-type'];
 
-            if (url === `/${process.env.BOT_TOKEN}` && contentType.includes('application/json')) { //bot token here //&& contentType.includes('application/json')
-                console.log('POST from Telegram API');
+            if (url === `/${process.env.BOT_TOKEN}` && contentType.includes('application/json')) { //'secret path' for getting telegram updates
+                log(server.name, 'POST from Telegram API');
 
                 let body = [];
                 request.on('data', chunk => {
                     body.push(chunk);
                 });
                 request.on('end', async () => {
-                    //console.log('body: ' + body.toString());
                     try {
                         const parsedBody = JSON.parse(body.join(''));
-                        //console.log('body parsed: ', parsedBody);
                         response.writeHead(200);
                         response.end();
                         const newMsgs = Object.keys(parsedBody).length;
                         if (newMsgs) {
-                            console.log(`got ${newMsgs} new updates`);
+                            log(server.name, `got ${newMsgs} new updates`);
                             await handleUpdatesWebhook(parsedBody).catch(err => {
                                 throw new TelegramAPIError(err)
                             });
                         } else {
-                            console.log('no new msgs, check your webhook');
+                            log(server.name, 'no new msgs, check your webhook');
                             return;
                         }
 
                     } catch (err) {
-                        console.log(error);
                         logError(error);
                     }
                 })
@@ -79,8 +85,8 @@ const server = async () => {
             }
         }
 
-        if (request.method == 'GET') {
-            console.log('GET');
+        if (request.method == 'GET') { //just to test if server is working
+            log(server.name, 'GET');
             const html = `
             <html>
                 <body>
@@ -97,7 +103,7 @@ const server = async () => {
     const port = process.env.PORT;
     const host = process.env.SERVERIP;
     servHTTPS.listen(port, host);
-    console.log(`Listening at http://${host}:${port}`);
+    log(server.name, `Listening at http://${host}:${port}`);
 }
 
 

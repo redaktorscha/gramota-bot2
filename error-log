@@ -371,3 +371,23 @@ iconv: недопустимая входная последовательнос�
     at processTicksAndRejections (internal/process/task_queues.js:97:5)
     at async handleUpdatesWebhook (/home/masha/Work/gramotaBot2/src/bot/handleUpdatesWebhook.js:20:29)
     at async IncomingMessage.<anonymous> (/home/masha/Work/gramotaBot2/src/bot/server.js:62:29)
+2020-10-15 20:46:48:Error: TelegramAPIError: Forbidden
+    at /home/masha/Work/gramotaBot2/src/bot/handleUpdatesWebhook.js:42:19
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+    at async handleUpdatesWebhook (/home/masha/Work/gramotaBot2/src/bot/handleUpdatesWebhook.js:41:9)
+    at async IncomingMessage.<anonymous> (/home/masha/Work/gramotaBot2/src/bot/server.js:59:29)
+2020-10-15 20:46:48:Error: TelegramAPIError: Forbidden
+    at /home/masha/Work/gramotaBot2/src/bot/handleUpdatesWebhook.js:42:19
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+    at async handleUpdatesWebhook (/home/masha/Work/gramotaBot2/src/bot/handleUpdatesWebhook.js:41:9)
+    at async IncomingMessage.<anonymous> (/home/masha/Work/gramotaBot2/src/bot/server.js:59:29)
+2020-10-15 20:47:06:Error: TelegramAPIError: Forbidden
+    at /home/masha/Work/gramotaBot2/src/bot/handleUpdatesWebhook.js:42:19
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+    at async handleUpdatesWebhook (/home/masha/Work/gramotaBot2/src/bot/handleUpdatesWebhook.js:41:9)
+    at async IncomingMessage.<anonymous> (/home/masha/Work/gramotaBot2/src/bot/server.js:59:29)
+2020-10-15 20:47:16:Error: TelegramAPIError: Forbidden
+    at /home/masha/Work/gramotaBot2/src/bot/handleUpdatesWebhook.js:42:19
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+    at async handleUpdatesWebhook (/home/masha/Work/gramotaBot2/src/bot/handleUpdatesWebhook.js:41:9)
+    at async IncomingMessage.<anonymous> (/home/masha/Work/gramotaBot2/src/bot/server.js:59:29)

@@ -1,9 +1,10 @@
 const logError = require('./src/tools/logError');
 const server = require('./src/bot/server');
-
+/**
+ * app entry point (webhook mode)
+ */
 (async () => {
     await server().catch(err => {
-        console.log(err);
         logError(err);
     })
 })()
@@ -15,7 +16,7 @@ const server = require('./src/bot/server');
 
 
 
-//const handleUpdatesPolling = require('./src/bot/handleUpdatesPolling'); //if 'polling' method
+//const handleUpdatesPolling = require('./src/bot/handleUpdatesPolling'); //uncomment this if 'polling' mode is preferable
 // (async () => {
 //     while (true) {
 //         await handleUpdatesPolling().catch(err => {

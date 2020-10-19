@@ -1,18 +1,21 @@
+/**
+ * @module src/bot/getUpdates
+ */
+
 const fetch = require('node-fetch');
 const {TelegramAPIError} = require('../tools/customErrors');
 
 /**
  * fetch telegram updates (polling mode)
- * @param {boolean} get getting messages or sending replies
+ * @param {boolean} get true when getting messages, false when sending replies
  * @param {string} url url query string
- * @returns {Promise} returns update obj from API
+ * @returns {Promise<Array|void>} update obj from API (arr of users info, msgs etc) when getting messages | void when sending replies
  */
 const getUpdates = async (get, url) => {
 
     const responseAPI = await fetch(url);
 
-    if (!responseAPI.ok) {
-        console.log(responseAPI.statusText);
+    if (!responseAPI.ok) {          
         throw new TelegramAPIError(responseAPI.statusText);
     };
 
@@ -20,7 +23,7 @@ const getUpdates = async (get, url) => {
         const {
             result
         } = await responseAPI.json();
-        return result; //arr of users info, msgs etc
+        return result; 
 
     } else {
         return; 

@@ -1,19 +1,45 @@
+/**
+ * Bot messages
+ * @module src/bot/botMsgs
+ */
+
+/**
+ *  @typedef {Object} botMsgs
+ * @property {Object} searching - messages for query results
+ * @property {string} searching.notFound - bot message if the word wasn't found
+ * @property {string} searching.foundSimilar - bot message if there are similar words in the dictionary but not the word given
+ * @property {Object} errors - bot messages on error
+ * @property {string} errors.errorBotText - if bot error occured
+ * @property {string} errors.errorGramotaText - if dictionary page is not working
+ * @property {string} errors.inCorrect - query isn't correct
+ * @property {string} errors.apologize - query took too long
+ * 
+ */
+
 const botMsgs = {
 
-        searching: {
-            notFound: 'Извините, слово не найдено',
-            foundSimilar: 'Искомое слово отсутствует; похожие слова: ',
-        },
+    searching: {
+        notFound: 'Извините, слово не найдено',
+        foundSimilar: 'Искомое слово отсутствует; похожие слова: ',
+    },
 
-        set '/start'(un) {
-            this._start = `Здравствуйте, ${un}!\nНапишите слово или словосочетание, и я проверю его по орфографическому словарю на сайте «Грамота.ру».\n
+    /**
+     * Set bot text on start command
+     * @param {string} un - user name
+     */
+    set '/start'(un) {
+        this._start = `Здравствуйте, ${un}!\nНапишите слово или словосочетание, и я проверю его по орфографическому словарю на сайте «Грамота.ру».\n
     Для справки — команда <b>/help</b>`;
-        },
-        get '/start'(){
-            return this._start;
-        },
+    },
+    /**
+     * Get bot text on start command
+     * @returns {string}
+     */
+    get '/start'() {
+        return this._start;
+    },
 
-        '/help': `Проверка производится по «Академическому орфографическому словарю» на портале gramota.ru.\n
+    '/help': `Проверка производится по «Академическому орфографическому словарю» на портале gramota.ru.\n
     Пожалуйста, используйте для поиска начальную форму слова:
     не <i>гуглил</i>, а <i>гуглить</i>; не <i>дома книги</i>, а <i>дом книги</i>.\n
     Можно использовать подстановочные символы 'звездочка' (*) и 'вопросительный знак' (?), например:\n
@@ -23,6 +49,7 @@ const botMsgs = {
     (c) Справочно-информационный портал "Грамота.ру".\n
     Автор бота — @redaktorscha`,
 
+
     '/sticker': '🙂',
 
 
@@ -30,7 +57,7 @@ const botMsgs = {
         errorBotText: `Кажется, я сломался. Зайдите позже, пожалуйста`,
         errorGramotaText: `Увы, проблемы на сайте «Грамота.ру». Давайте попробуем еще раз через пять минут?`,
         inCorrect: 'Некорректный запрос',
-        apologize: '. Простите за ожидание',
+        apologize: '\n Простите за ожидание',
     }
 }
 

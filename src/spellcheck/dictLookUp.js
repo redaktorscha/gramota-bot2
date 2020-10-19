@@ -1,3 +1,7 @@
+/** 
+ * @module src/spellcheck/dictLookUp
+ */
+
 const doQuery = require('./doQuery');
 const processCurlResponse = require('./processCurlResponse');
 const logError = require('../tools/logError');
@@ -8,6 +12,12 @@ const {
 } = require('../bot/botMsgs');
 
 
+
+ /**
+  * check word and return result
+  * @param {string} query - word(s) to check
+  * @returns {string} - readable result with accent marks
+  */
 const dictLookUp = async (query) => {
 
     try {
@@ -15,7 +25,6 @@ const dictLookUp = async (query) => {
         return processCurlResponse(queryResult);
 
     } catch (err) {
-        console.log(err); //
         logError(err);
         return errorGramotaText;
     }

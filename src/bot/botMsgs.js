@@ -4,7 +4,7 @@
  */
 
 /**
- *  @typedef {Object} botMsgs
+ * @typedef {Object} botMsgs - bot responses
  * @property {Object} searching - messages for query results
  * @property {string} searching.notFound - bot message if the word wasn't found
  * @property {string} searching.foundSimilar - bot message if there are similar words in the dictionary but not the word given

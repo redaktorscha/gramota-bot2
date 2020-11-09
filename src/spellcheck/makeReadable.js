@@ -16,7 +16,12 @@ const makeReadable = (str) => {
         str = insertLineBreaks(str);
     }
 
-    return removeTags(insertAccents(str));
+    if (str.includes(`<span class="accent">`)) {
+        return removeTags(insertAccents(str));
+    } else {
+        return removeTags(str);
+    }
+
 }
 
 module.exports = makeReadable;

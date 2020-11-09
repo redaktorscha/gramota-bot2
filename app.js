@@ -16,7 +16,7 @@ const server = require('./src/bot/server');
 
 
 
-//const handleUpdatesPolling = require('./src/bot/handleUpdatesPolling'); //uncomment this if 'polling' mode is preferable
+// const handleUpdatesPolling = require('./src/bot/handleUpdatesPolling'); //uncomment this if 'polling' mode is preferable
 // (async () => {
 //     while (true) {
 //         await handleUpdatesPolling().catch(err => {

@@ -8,3 +8,4 @@ src/tools/getOffset.js
 *.pem
 *.key
 .env
+*log

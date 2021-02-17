@@ -45,6 +45,7 @@ const server = async () => {
         });
 
         response.on('error', err => {
+            logError(err);
             return;
         });
 
@@ -54,7 +55,7 @@ const server = async () => {
             if (url === `/${process.env.BOT_TOKEN}` && contentType.includes('application/json')) { //'secret path' for getting telegram updates
                 log(server.name, 'POST from Telegram API');
 
-                let body = [];
+                let body = [];//const
                 request.on('data', chunk => {
                     body.push(chunk);
                 });
@@ -90,7 +91,7 @@ const server = async () => {
             const html = `
             <html>
                 <body>
-                    <h2>http://localhost:3000</h2>
+                    <h2>https://localhost:3000</h2>
                 </body>
             </html>`;
             response.writeHead(200, {

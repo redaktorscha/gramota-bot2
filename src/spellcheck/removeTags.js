@@ -2,9 +2,9 @@
  * @module src/spellcheck/removeTags
  */
 
-const {
+import {
     htmlTags
-} = require('../tools/regexps');
+} from '../tools/regexps.js';
 
 /**
  * removes html tags
@@ -15,4 +15,4 @@ const removeTags = (html) => {
     return html.replace(htmlTags, '');
 }
 
-module.exports = removeTags;
+export default removeTags;

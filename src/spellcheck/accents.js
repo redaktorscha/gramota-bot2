@@ -7,4 +7,4 @@
  */
 const accents = ['а','е','и','о','у','ы','э','ю','я','А','Е','И','О','У','Ы','Э','Ю','Я'];
 
-module.exports = accents;
+export default accents;

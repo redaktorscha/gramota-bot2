@@ -12,4 +12,4 @@ const pageTargets = {
     similarWords: 'Похожие слова'
 };
 
-module.exports = pageTargets;
+export default pageTargets;

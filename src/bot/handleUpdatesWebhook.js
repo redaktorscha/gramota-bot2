@@ -2,16 +2,15 @@
  * @module src/bot/handleUpdatesWebhook
  */
 
-const logError = require('../tools/logError');
-const getUpdates = require('./getUpdates');
-const compileReply = require('./compileReply');
-const {
-    errors: {
-        apologize
-    }
-} = require('../bot/botMsgs');
-require('dotenv').config();
+import logError from '../tools/logError.js';
+import getUpdates from './getUpdates.js';
+import compileReply from './compileReply.js';
+import botMsgs from './botMsgs.js';
+import dotenv from 'dotenv';
 
+dotenv.config({
+    path: '../../.env'
+});
 
 /**
  * bot handler for getting/sending msgs (webhook mode)
@@ -22,6 +21,11 @@ const handleUpdatesWebhook = async (msg) => {
     try {
         const startTime = Date.now();
         const API_PAGE = `${process.env.TELEGRAM_URL}${process.env.BOT_TOKEN}`;
+        const {
+            errors: {
+                apologize
+            }
+        } = botMsgs;
 
         const {
             message
@@ -51,4 +55,4 @@ const handleUpdatesWebhook = async (msg) => {
     }
 }
 
-module.exports = handleUpdatesWebhook;
+export default handleUpdatesWebhook;

@@ -1,7 +1,7 @@
 /**
  * @module src/spellcheck/insertAccents
  */
-const accents = require('./accents');
+import accents from './accents.js';
 
 /**
  * inserts accent marks
@@ -25,4 +25,4 @@ const insertAccents = (str) => {
         .join('');
 }
 
-module.exports = insertAccents;
+export default insertAccents;

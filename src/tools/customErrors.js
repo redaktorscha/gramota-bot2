@@ -28,8 +28,4 @@ class GramotaRuError extends Error {
   }
 }
 
-
-module.exports = {
-  TelegramAPIError,
-  GramotaRuError
-};
+export {TelegramAPIError, GramotaRuError};

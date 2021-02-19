@@ -2,8 +2,8 @@
  * @module src/bot/getUpdates
  */
 
-const fetch = require('node-fetch');
-const {TelegramAPIError} = require('../tools/customErrors');
+import fetch from 'node-fetch';
+import {TelegramAPIError} from '../tools/customErrors.js';
 
 /**
  * fetch telegram updates (polling mode)
@@ -30,4 +30,4 @@ const getUpdates = async (get, url) => {
     }
 }
 
-module.exports = getUpdates;
+export default getUpdates;

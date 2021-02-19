@@ -3,18 +3,19 @@
  */
 
 
-const fs = require('fs');
-require('dotenv').config();
-const logError = require('../tools/logError');
-const log = require('../tools/log');
-const getUpdates = require('./getUpdates');
-const compileReply = require('./compileReply');
-const {
-    errors: {
-        apologize
-    }
-} = require('../bot/botMsgs');
-const path = require('path');
+import fs from 'fs';
+import dotenv from 'dotenv';
+import logError from '../tools/logError.js';
+import log from '../tools/log.js';
+import getUpdates from './getUpdates.js';
+import compileReply from './compileReply.js';
+import botMsgs from '../bot/botMsgs.js';
+import getPath from '../tools/getPath.js';
+
+
+dotenv.config({
+    path: '../../.env'
+});
 
 
 /**
@@ -25,11 +26,17 @@ const handleUpdatesPolling = async () => {
     try {
         const startTime = Date.now();
         const API_PAGE = `${process.env.TELEGRAM_URL}${process.env.BOT_TOKEN}`;
-        const offsetPath = path.join(__dirname, '..', 'tools', 'offset');
+        const offsetPath = getPath('offset');
 
         let offset = Number(fs.readFileSync(offsetPath, 'utf-8')) || null;
 
         const urlQueryStringGet = `${API_PAGE}/getUpdates?offset=${offset + 1}`; //get msgs
+
+        const {
+            errors: {
+                apologize
+            }
+        } = botMsgs;
 
         const newMsgs = await getUpdates(true, urlQueryStringGet);
 
@@ -76,4 +83,4 @@ const handleUpdatesPolling = async () => {
     }
 }
 
-module.exports = handleUpdatesPolling;
+export default handleUpdatesPolling;

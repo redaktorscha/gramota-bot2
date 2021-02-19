@@ -2,36 +2,32 @@
  * @module src/bot/server
  */
 
-const https = require('https'); //module server.js
-require('dotenv').config();
-fs = require('fs');
-const path = require('path');
-const log = require('../tools/log');
-const handleUpdatesWebhook = require('./handleUpdatesWebhook');
+import https from 'https';
+import fs from 'fs';
+import getPath from '../tools/getPath.js';
+import log from '../tools/log';
+import handleUpdatesWebhook from './handleUpdatesWebhook.js';
+import dotenv from 'dotenv';
+dotenv.config({
+    path: '../../.env'
+});
 
-
-const {
+import {
     TelegramAPIError
-} = require('../tools/customErrors');
+} from '../tools/customErrors.js';
 
-const logError = require('../tools/logError');
+import logError from '../tools/logError.js';
 
 
 /**
  * node https server
  * @returns {Promise<void>}
  */
-const server = async () => {
-    
-    /**
-     * @param {string} fileName
-     * @returns {string} - path to SSL key or certificate
-     */
-    const pathToPem = (fileName) => path.join(__dirname, '..', '/..', fileName);
+const server = async () => {   
 
     const options = {
-        key: fs.readFileSync(pathToPem('webhook_pkey.key')),
-        cert: fs.readFileSync(pathToPem('webhook_cert.pem'))
+        key: fs.readFileSync(getPath('webhook_pkey.key')),
+        cert: fs.readFileSync(getPath('webhook_cert.pem'))
     };
     const servHTTPS = https.createServer(options, (request, response) => {
 
@@ -55,7 +51,7 @@ const server = async () => {
             if (url === `/${process.env.BOT_TOKEN}` && contentType.includes('application/json')) { //'secret path' for getting telegram updates
                 log(server.name, 'POST from Telegram API');
 
-                let body = [];//const
+                let body = []; //const
                 request.on('data', chunk => {
                     body.push(chunk);
                 });
@@ -108,4 +104,4 @@ const server = async () => {
 }
 
 
-module.exports = server;
+export default server;

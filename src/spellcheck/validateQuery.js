@@ -2,10 +2,10 @@
  * @module src/spellcheck/validateQuery
  */
 
-const {
+import {
     allowedChars,
     onlyAsteriks
-} = require('../tools/regexps');
+} from '../tools/regexps.js';
 
 /**
  * only cyrillic chars, '*' and '?' are valid ((??? is valid but *** isn't valid))
@@ -24,4 +24,4 @@ const validateQuery = (query) => {
     return null;
 }
 
-module.exports = validateQuery;
+export default validateQuery;

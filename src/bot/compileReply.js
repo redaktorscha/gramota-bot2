@@ -2,14 +2,9 @@
  * @module src/bot/compileReply
  */
 
-const dictLookUp = require('../spellcheck/dictLookUp');
-const botMsgs = require('./botMsgs');
-const {
-    errors: {
-        inCorrect
-    }
-} = require('../bot/botMsgs');
-const validateQuery = require('../spellcheck/validateQuery.js');
+import dictLookUp from '../spellcheck/dictLookUp.js';
+import botMsgs from './botMsgs.js';
+import validateQuery from '../spellcheck/validateQuery.js';
 
 
 /**
@@ -27,7 +22,8 @@ const compileReply = async (user) => {
 
     const {
         errors: {
-            errorBotText
+            errorBotText,
+            inCorrect
         }
     } = botMsgs;
 
@@ -51,4 +47,4 @@ const compileReply = async (user) => {
     return botResponse;
 }
 
-module.exports = compileReply;
+export default compileReply;

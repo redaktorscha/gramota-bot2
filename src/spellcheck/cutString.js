@@ -25,4 +25,4 @@ const cutString = (str, closingTag) => {
     return null;
 }
 
-module.exports = cutString;
+export default cutString;

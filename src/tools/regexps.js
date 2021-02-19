@@ -16,4 +16,4 @@ const regexps = {
     allowedChars: /[а-яё*?]+/ig,
 }
 
-module.exports = regexps;
+export default regexps;

@@ -7,9 +7,10 @@ const getUpdates = require('./getUpdates');
 const compileReply = require('./compileReply');
 const {
     errors: {
-        apologize
+        apologize,
+        inCorrect
     }
-} = require('../bot/botMsgs');
+} = require('./botMsgs');
 require('dotenv').config();
 
 
@@ -27,12 +28,16 @@ const handleUpdatesWebhook = async (msg) => {
             message
         } = msg;
 
-        let botResponse = await compileReply({
-            userName: message.from.first_name,
-            incomingMsg: message.text || '/sticker'
-        }).catch(err => {
-            throw new Error(err);
-        });
+        let botResponse = inCorrect;
+
+        if (message.text.length < 50) {
+            botResponse = await compileReply({
+                userName: message.from.first_name,
+                incomingMsg: message.text || '/sticker'
+            }).catch(err => {
+                throw new Error(err);
+            });
+        }
 
 
         const endTime = Date.now();

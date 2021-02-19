@@ -3,11 +3,11 @@ const server = require('./src/bot/server');
 /**
  * app entry point (webhook mode)
  */
-(async () => {
-    await server().catch(err => {
-        logError(err);
-    })
-})()
+// (async () => {
+//     await server().catch(err => {
+//         logError(err);
+//     })
+// })()
 
 
 
@@ -22,7 +22,7 @@ const handleUpdatesPolling = require('./src/bot/handleUpdatesPolling'); //uncomm
 (async () => {
     while (true) {
         await handleUpdatesPolling().catch(err => {
-            console.log(err);
+            logError(err);
         });
         await new Promise(resolve => setTimeout(resolve, 5000));
     }

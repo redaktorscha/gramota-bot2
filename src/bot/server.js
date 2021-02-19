@@ -55,7 +55,7 @@ const server = async () => {
             if (url === `/${process.env.BOT_TOKEN}` && contentType.includes('application/json')) { //'secret path' for getting telegram updates
                 log(server.name, 'POST from Telegram API');
 
-                let body = [];//const
+                const body = [];
                 request.on('data', chunk => {
                     body.push(chunk);
                 });

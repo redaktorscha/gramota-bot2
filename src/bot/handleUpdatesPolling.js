@@ -11,9 +11,10 @@ const getUpdates = require('./getUpdates');
 const compileReply = require('./compileReply');
 const {
     errors: {
-        apologize
+        apologize,
+        inCorrect
     }
-} = require('../bot/botMsgs');
+} = require('./botMsgs');
 const path = require('path');
 
 
@@ -27,7 +28,9 @@ const handleUpdatesPolling = async () => {
         const API_PAGE = `${process.env.TELEGRAM_URL}${process.env.BOT_TOKEN}`;
         const offsetPath = path.join(__dirname, '..', 'tools', 'offset');
 
-        let offset = fs.readFileSync(offsetPath, 'utf-8') || null;
+        let offset = Number(fs.readFileSync(offsetPath, 'utf-8')) || null;
+
+        let botResponse = inCorrect;
 
         const urlQueryStringGet = `${API_PAGE}/getUpdates?offset=${offset + 1}`; //get msgs
 
@@ -42,12 +45,16 @@ const handleUpdatesPolling = async () => {
                     message
                 } = msg;
 
-                let botResponse = await compileReply({
-                    userName: message.from.first_name,
-                    incomingMsg: message.text || '/sticker'
-                }).catch(err => {
-                    throw new Error(err);
-                });
+                if (message.text.length < 50) {
+
+                    botResponse = await compileReply({
+                        userName: message.from.first_name,
+                        incomingMsg: message.text || '/sticker'
+                    }).catch(err => {
+                        throw new Error(err);
+                    });
+                }
+
                 const endTime = Date.now();
                 if (endTime - startTime > 5000) {
                     botResponse += apologize;
@@ -63,7 +70,7 @@ const handleUpdatesPolling = async () => {
                     throw new Error(err);
                 });
 
-            fs.writeFileSync(offsetPath, offset); // new offset (last user obj);
+            fs.writeFileSync(offsetPath, offset.toString()); // new offset (last user obj);
 
         } else {
             log(handleUpdatesPolling.name, 'no new msgs');

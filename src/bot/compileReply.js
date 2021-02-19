@@ -4,12 +4,7 @@
 
 const dictLookUp = require('../spellcheck/dictLookUp');
 const botMsgs = require('./botMsgs');
-const {
-    errors: {
-        inCorrect
-    }
-} = require('../bot/botMsgs');
-const validateQuery = require('../spellcheck/validateQuery.js');
+const validateQuery = require('../spellcheck/validateQuery');
 
 
 /**
@@ -27,7 +22,8 @@ const compileReply = async (user) => {
 
     const {
         errors: {
-            errorBotText
+            errorBotText,
+            inCorrect
         }
     } = botMsgs;
 

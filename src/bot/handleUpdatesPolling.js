@@ -27,7 +27,7 @@ const handleUpdatesPolling = async () => {
         const API_PAGE = `${process.env.TELEGRAM_URL}${process.env.BOT_TOKEN}`;
         const offsetPath = path.join(__dirname, '..', 'tools', 'offset');
 
-        let offset = Number(fs.readFileSync(offsetPath, 'utf-8')) || null;
+        let offset = fs.readFileSync(offsetPath, 'utf-8') || null;
 
         const urlQueryStringGet = `${API_PAGE}/getUpdates?offset=${offset + 1}`; //get msgs
 

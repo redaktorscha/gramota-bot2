@@ -4,7 +4,7 @@
 
 const https = require('https'); //module server.js
 require('dotenv').config();
-fs = require('fs');
+const fs = require('fs');
 const path = require('path');
 const log = require('../tools/log');
 const handleUpdatesWebhook = require('./handleUpdatesWebhook');

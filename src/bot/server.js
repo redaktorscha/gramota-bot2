@@ -2,10 +2,8 @@
  * @module src/bot/server
  */
 
-const https = require('https'); //module server.js
+const http = require('http');
 require('dotenv').config();
-const fs = require('fs');
-const path = require('path');
 const log = require('../tools/log');
 const handleUpdatesWebhook = require('./handleUpdatesWebhook');
 
@@ -18,22 +16,12 @@ const logError = require('../tools/logError');
 
 
 /**
- * node https server
+ * node http server
  * @returns {Promise<void>}
  */
 const server = async () => {
     
-    /**
-     * @param {string} fileName
-     * @returns {string} - path to SSL key or certificate
-     */
-    const pathToPem = (fileName) => path.join(__dirname, '..', '/..', fileName);
-
-    const options = {
-        key: fs.readFileSync(pathToPem('webhook_pkey.key')),
-        cert: fs.readFileSync(pathToPem('webhook_cert.pem'))
-    };
-    const servHTTPS = https.createServer(options, (request, response) => {
+    const servHTTP = http.createServer((request, response) => {
 
         const url = request.url;
 
@@ -91,7 +79,7 @@ const server = async () => {
             const html = `
             <html>
                 <body>
-                    <h2>https://localhost:3000</h2>
+                    <h2>http://localhost:3000</h2>
                 </body>
             </html>`;
             response.writeHead(200, {
@@ -103,7 +91,7 @@ const server = async () => {
 
     const port = process.env.PORT;
     const host = process.env.SERVERIP;
-    servHTTPS.listen(port, host);
+    servHTTP.listen(port, host);
     log(server.name, `Listening at http://${host}:${port}`);
 }
 

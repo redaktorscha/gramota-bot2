@@ -11,8 +11,7 @@ const getUpdates = require('./getUpdates');
 const compileReply = require('./compileReply');
 const {
     errors: {
-        apologize,
-        inCorrect
+        apologize
     }
 } = require('./botMsgs');
 const path = require('path');
@@ -30,8 +29,6 @@ const handleUpdatesPolling = async () => {
 
         let offset = Number(fs.readFileSync(offsetPath, 'utf-8')) || null;
 
-        let botResponse = inCorrect;
-
         const urlQueryStringGet = `${API_PAGE}/getUpdates?offset=${offset + 1}`; //get msgs
 
         const newMsgs = await getUpdates(true, urlQueryStringGet);
@@ -44,16 +41,14 @@ const handleUpdatesPolling = async () => {
                 const {
                     message
                 } = msg;
+              
 
-                if (message.text.length < 50) {
-
-                    botResponse = await compileReply({
+                   let botResponse = await compileReply({
                         userName: message.from.first_name,
                         incomingMsg: message.text || '/sticker'
                     }).catch(err => {
                         throw new Error(err);
-                    });
-                }
+                    });             
 
                 const endTime = Date.now();
                 if (endTime - startTime > 5000) {

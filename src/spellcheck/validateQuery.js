@@ -16,7 +16,7 @@ const validateQuery = (query) => {
     let checked = query.match(allowedChars);
     if (checked) {
         checked = checked.join('');
-        if (!checked.match(onlyAsteriks)) {
+        if (!checked.match(onlyAsteriks) && checked.length < 50) {
             return checked;
         }
     }

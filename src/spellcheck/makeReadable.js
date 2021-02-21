@@ -1,9 +1,9 @@
 /**
  * @module src/spellcheck/makeReadable
  */
-const insertLineBreaks = require('./insertLineBreaks');
-const insertAccents = require('./insertAccents');
-const removeTags = require('./removeTags');
+import insertLineBreaks from './insertLineBreaks.js';
+import insertAccents from './insertAccents.js';
+import removeTags from './removeTags.js';
 
 /**
  * makes readable string from html
@@ -24,4 +24,4 @@ const makeReadable = (str) => {
 
 }
 
-module.exports = makeReadable;
+export default makeReadable;

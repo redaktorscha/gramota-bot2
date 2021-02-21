@@ -2,25 +2,21 @@
  * @module src/spellcheck/processCurlResponse
  */
 
-const {
-    containsCyrillic
-} = require('../tools/regexps');
+import botMsgs from './botMsgs.js';
 
-const {
+import {
+    containsCyrillic
+} from '../tools/regexps.js';
+
+import {
     noWord,
     similarWords
-} = require('./pageTargets');
+} from './pageTargets.js';
 
-const {
-    searching: {
-        notFound,
-        foundSimilar
-    }
 
-} = require('../bot/botMsgs');
 
-const cutString = require('./cutString');
-const makeReadable = require('./makeReadable');
+import cutString from './cutString.js';
+import makeReadable from './makeReadable.js';
 
 /**
  * parse html, find and process query result
@@ -28,6 +24,14 @@ const makeReadable = require('./makeReadable');
  * @returns {string} - readable query result
  */
 const processCurlResponse = (htmlStr) => {
+
+    const {
+        searching: {
+            notFound,
+            foundSimilar
+        }
+    
+    } = botMsgs;
 
     let reply = '';
 
@@ -55,4 +59,4 @@ const processCurlResponse = (htmlStr) => {
 
     return `${reply}${cutStr}`;
 }
-module.exports = processCurlResponse;
+export default processCurlResponse;

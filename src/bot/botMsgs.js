@@ -61,4 +61,4 @@ const botMsgs = {
     }
 }
 
-module.exports = botMsgs;
+export default botMsgs;

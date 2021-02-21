@@ -2,17 +2,19 @@
  * @module src/bot/server
  */
 
-const http = require('http');
-require('dotenv').config();
-const log = require('../tools/log');
-const handleUpdatesWebhook = require('./handleUpdatesWebhook');
+import http from 'https';
+import log from '../tools/log';
+import handleUpdatesWebhook from './handleUpdatesWebhook.js';
+import dotenv from 'dotenv';
+dotenv.config({
+    path: '../../.env'
+});
 
-
-const {
+import {
     TelegramAPIError
-} = require('../tools/customErrors');
+} from '../tools/customErrors.js';
 
-const logError = require('../tools/logError');
+import logError from '../tools/logError.js';
 
 
 /**
@@ -96,4 +98,4 @@ const server = async () => {
 }
 
 
-module.exports = server;
+export default server;

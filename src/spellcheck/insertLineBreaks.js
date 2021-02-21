@@ -20,4 +20,4 @@ const insertLineBreaks = (str) => {
     return str;
 }
 
-module.exports = insertLineBreaks;
+export default insertLineBreaks;

@@ -2,23 +2,25 @@
  * @module src/spellcheck/dictLookUp
  */
 
-const doQuery = require('./doQuery');
-const processCurlResponse = require('./processCurlResponse');
-const logError = require('../tools/logError');
-const {
-    errors: {
-        errorGramotaText
-    }
-} = require('../bot/botMsgs');
+import doQuery from './doQuery.js';
+import processCurlResponse from './processCurlResponse.js';
+import logError from '../tools/logError.js';
+import botMsgs from './botMsgs.js';
 
 
 
- /**
-  * check word and return result
-  * @param {string} query - word(s) to check
-  * @returns {string} - readable result with accent marks
-  */
+/**
+ * check word and return result
+ * @param {string} query - word(s) to check
+ * @returns {string} - readable result with accent marks
+ */
 const dictLookUp = async (query) => {
+
+    const {
+        errors: {
+            errorGramotaText
+        }
+    } = botMsgs;
 
     try {
         const queryResult = await doQuery(query);
@@ -30,4 +32,4 @@ const dictLookUp = async (query) => {
     }
 
 }
-module.exports = dictLookUp;
+export default dictLookUp;

@@ -2,10 +2,13 @@
  * @module src/spellcheck/doQuery
  */
 
-const { GramotaRuError } = require('../tools/customErrors');
-require('dotenv').config();
-const childProcess = require('child_process');
-const logError = require('../tools/logError');
+import { GramotaRuError } from '../tools/customErrors.js';
+import dotenv from 'dotenv';
+dotenv.config({
+    path: '../../.env'
+});
+import childProcess from 'child_process.js';
+import logError from '../tools/logError.js';
 
 
 /**
@@ -31,4 +34,4 @@ const doQuery = async (word) => {
     });
 }
 
-module.exports = doQuery;
+export default doQuery;

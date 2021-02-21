@@ -5,14 +5,14 @@
 import doQuery from './doQuery.js';
 import processCurlResponse from './processCurlResponse.js';
 import logError from '../tools/logError.js';
-import botMsgs from './botMsgs.js';
+import botMsgs from '../bot/botMsgs.js';
 
 
 
 /**
  * check word and return result
  * @param {string} query - word(s) to check
- * @returns {string} - readable result with accent marks
+ * @returns {Promise<string>} - readable result with accent marks
  */
 const dictLookUp = async (query) => {
 

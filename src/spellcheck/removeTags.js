@@ -2,9 +2,7 @@
  * @module src/spellcheck/removeTags
  */
 
-import {
-    htmlTags
-} from '../tools/regexps.js';
+import regexps from '../tools/regexps.js';
 
 /**
  * removes html tags
@@ -12,6 +10,7 @@ import {
  * @returns {string} - string without tags
  */
 const removeTags = (html) => {
+    const { htmlTags } = regexps;
     return html.replace(htmlTags, '');
 }
 

@@ -1,11 +1,10 @@
 todo
 *workspace
 node_modules/
-*output*
 telapi
 offset
-src/tools/getOffset.js
 *.pem
 *.key
 .env
 *log
+*.dockerignore

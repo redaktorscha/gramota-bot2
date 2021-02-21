@@ -10,8 +10,7 @@ import validateQuery from '../spellcheck/validateQuery.js';
 /**
  * compile bot's reply depending on user command
  * @param {Object} user - user info
- * @returns {Promise<string>} - bot reply message
- * 
+ * @returns {Promise<string>} - bot reply message 
  */
 
 const compileReply = async (user) => {

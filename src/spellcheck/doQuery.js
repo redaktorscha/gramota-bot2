@@ -3,11 +3,7 @@
  */
 
 import { GramotaRuError } from '../tools/customErrors.js';
-import dotenv from 'dotenv';
-dotenv.config({
-    path: '../../.env'
-});
-import childProcess from 'child_process.js';
+import childProcess from 'child_process';
 import logError from '../tools/logError.js';
 
 

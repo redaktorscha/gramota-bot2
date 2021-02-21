@@ -6,11 +6,6 @@ import logError from '../tools/logError.js';
 import getUpdates from './getUpdates.js';
 import compileReply from './compileReply.js';
 import botMsgs from './botMsgs.js';
-import dotenv from 'dotenv';
-
-dotenv.config({
-    path: '../../.env'
-});
 
 /**
  * bot handler for getting/sending msgs (webhook mode)

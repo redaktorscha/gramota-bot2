@@ -4,7 +4,6 @@
 
 
 import fs from 'fs';
-import dotenv from 'dotenv';
 import logError from '../tools/logError.js';
 import log from '../tools/log.js';
 import getUpdates from './getUpdates.js';
@@ -12,10 +11,6 @@ import compileReply from './compileReply.js';
 import botMsgs from './botMsgs.js';
 import getPath from '../tools/getPath.js';
 
-
-dotenv.config({
-    path: '../../.env'
-});
 
 
 /**

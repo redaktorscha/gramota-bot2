@@ -2,19 +2,9 @@
  * @module src/spellcheck/processCurlResponse
  */
 
-import botMsgs from './botMsgs.js';
-
-import {
-    containsCyrillic
-} from '../tools/regexps.js';
-
-import {
-    noWord,
-    similarWords
-} from './pageTargets.js';
-
-
-
+import botMsgs from '../bot/botMsgs.js';
+import regexps from '../tools/regexps.js';
+import pageTargets from './pageTargets.js';
 import cutString from './cutString.js';
 import makeReadable from './makeReadable.js';
 
@@ -30,8 +20,18 @@ const processCurlResponse = (htmlStr) => {
             notFound,
             foundSimilar
         }
-    
+
     } = botMsgs;
+
+    const {
+        containsCyrillic
+    } = regexps;
+
+    const {
+        noWord,
+        similarWords
+    } = pageTargets;
+
 
     let reply = '';
 

@@ -2,14 +2,9 @@
  * @module src/bot/server
  */
 
-import http from 'https';
-import log from '../tools/log';
+import http from 'http';
+import log from '../tools/log.js';
 import handleUpdatesWebhook from './handleUpdatesWebhook.js';
-import dotenv from 'dotenv';
-dotenv.config({
-    path: '../../.env'
-});
-
 import {
     TelegramAPIError
 } from '../tools/customErrors.js';
@@ -91,10 +86,8 @@ const server = async () => {
         }
     });
 
-    const port = process.env.PORT;
-    const host = process.env.SERVERIP;
     servHTTP.listen(port, host);
-    log(server.name, `Listening at http://${host}:${port}`);
+    log(server.name, `Listening at http://${SERVERIP}:${PORT}`);
 }
 
 

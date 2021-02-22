@@ -6,6 +6,8 @@ WORKDIR /usr/src/app
 # where available (npm@5+)
 COPY package*.json ./
 
+RUN apk --no-cache add curl
+
 RUN npm install
 
 # Bundle app source

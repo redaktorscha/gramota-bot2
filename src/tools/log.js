@@ -9,7 +9,7 @@ import getPath from'./getPath.js';
  * @param {string} txt - log text
  */
 const log = (funcName = '', txt) => {
-    const pathToLog = getPath('log');
+    const pathToLog = getPath('log', '../..');
     fs.appendFileSync(pathToLog, `${funcName}:${txt}\n`);
 }
 

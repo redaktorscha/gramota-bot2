@@ -9,7 +9,7 @@ import getPath from './getPath.js';
  * @param {Error} error
  */
 const logError = (error) => {
-    const pathToErrorLog = getPath('error-log');
+    const pathToErrorLog = getPath('error-log', '../..');
     const date = new Date().toLocaleString();
     fs.appendFileSync(pathToErrorLog, `${date}:${error.stack}\n`);
 }

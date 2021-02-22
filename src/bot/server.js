@@ -17,7 +17,7 @@ import logError from '../tools/logError.js';
  * @returns {Promise<void>}
  */
 const server = async () => {
-    
+
     const servHTTP = http.createServer((request, response) => {
 
         const url = request.url;
@@ -61,7 +61,7 @@ const server = async () => {
                         }
 
                     } catch (err) {
-                        logError(error);
+                        logError(err);
                     }
                 })
             } else {
@@ -86,8 +86,13 @@ const server = async () => {
         }
     });
 
-    servHTTP.listen(port, host);
-    log(server.name, `Listening at http://${SERVERIP}:${PORT}`);
+    const host = process.env.SERVERIP;
+    const port = process.env.PORT;
+
+    servHTTP.listen(port, () => {
+        log(server.name, `Listening at http://${host}:${port} PID: ${process.pid}`);
+    });
+
 }
 
 

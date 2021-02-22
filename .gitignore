@@ -8,3 +8,4 @@ offset
 .env
 *log
 *.dockerignore
+*.yml

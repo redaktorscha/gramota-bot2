@@ -1,24 +1,18 @@
-import logError from './src/tools/logError.js';
-import dotenv from 'dotenv';
-dotenv.config({
-    path: './.env'
-});
+// import logError from './tools/logError.js';
+import 'dotenv/config';
 
+import initServer from './bot/initServer.js';
 
-/**
- * app entry point (webhook mode)
- */
-import server from './src/bot/server.js';
-(async () => {
-    await server().catch(err => {
-        logError(err);
-    })
-})()
-
-
-
-
-
+initServer();
+// /**
+//  * app entry point (webhook mode)
+//  */
+// import server from './bot/server.js';
+// (async () => {
+//     await server().catch(err => {
+//         logError(err);
+//     })
+// })()
 
 /**
  * app entry point (polling mode)

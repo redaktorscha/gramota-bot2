@@ -3,7 +3,17 @@
 import express, { Request, Response, NextFunction } from 'express';
 import { writeFile } from 'node:fs/promises';
 import iconv from 'iconv-lite';
-import { createReadStream } from 'node:fs';
+import botReplies from './textResources.json';
+
+type BotCommandType = 'start' | 'help' | 'info';
+
+import type {
+  Update,
+  Message,
+  Sticker,
+  User,
+  MessageEntity,
+} from 'telegram-typings';
 
 const STATUS_CODES = {
   ok: 200,
@@ -14,8 +24,10 @@ const STATUS_CODES = {
 
 const RESPONSE_CONTENT_TYPE = 'text/html; charset=utf-8';
 const PORT = Number(process.env.PORT) || 3000;
-const BOT_TOKEN = process.env.BOT_TOKEN;
+const BOT_TOKEN = process.env.BOT_TOKEN || '';
+const DICT_URI = process.env.DICT_URI || '';
 const SECRET_ROUTE = `/${BOT_TOKEN}/`;
+const TARGET_ENCODING = 'win1251';
 
 const errorHandler = (
   error: Error,
@@ -27,6 +39,84 @@ const errorHandler = (
     .status(STATUS_CODES.errorServer)
     .send(`Oops, something went wrong! ${error.message}`);
 };
+
+// const testRouteHandler = () => {
+
+// }
+
+const handleQuery = (response: Response, status: number, reply: string) => {
+  response
+    .status(status)
+    .set({
+      'Content-Type': RESPONSE_CONTENT_TYPE,
+    })
+    .send(reply);
+};
+
+const isBot = (user: User | undefined) => user && user.is_bot;
+
+const isCommand = (message: string) => message.startsWith('/');
+
+const isSupportedCommand = (
+  command: string | BotCommandType
+): command is BotCommandType =>
+  command === 'start' || command === 'info' || command === 'help';
+
+const getReplyToCommand = (
+  userName: string,
+  botCommand: BotCommandType | string
+) => {
+  if (!isSupportedCommand(botCommand)) {
+    return botReplies.unsupported_command;
+  }
+  if (botCommand === 'start') {
+    return `${botReplies.greet}, ${userName}!\n ${botReplies.start}`;
+  } else {
+    return botReplies[botCommand];
+  }
+};
+
+const getReplyToSticker = () => botReplies.sticker;
+
+const getReplyToEmpty = (userName: string) =>
+  `${userName}, ${botReplies.empty}`;
+
+const getReplyToQueryWord = (word: string) => {
+  const queryUri = getQueryUri(DICT_URI, word.trim());
+  return fetchBufferedResults(queryUri)
+    .then((arrayBuffer) =>
+      decodeFetchResults(Buffer.from(arrayBuffer), TARGET_ENCODING)
+    )
+    .then((convertedString) => {
+      const substr = 'style="padding-left:50px">';
+      const closingTag = '</div';
+      const targetIndex = convertedString.indexOf(substr);
+      const cutIndexLeft = targetIndex + substr.length;
+
+      let queryResult = convertedString.slice(cutIndexLeft);
+      const cutIndexRight = queryResult.indexOf(closingTag);
+      queryResult = queryResult.slice(0, cutIndexRight);
+      console.log('queryResult', queryResult);
+      return queryResult;
+    });
+};
+
+const getQueryUri = (dictUri: string, queryString: string) =>
+  `${dictUri}${queryString}`;
+
+const decodeFetchResults = (buffer: Buffer, encodingType: string) =>
+  iconv.decode(buffer, encodingType).toString();
+
+const fetchBufferedResults = async (uri: string) => {
+  const response = await fetch(uri);
+  if (!response.ok) {
+    return Promise.reject('gramota error'); // todo: handle gramota errors
+  }
+  const result = await response.arrayBuffer();
+  return result;
+};
+
+const handleTelegramUpdates = (updateData: Message) => {};
 
 const initServer = () => {
   const app = express();
@@ -43,52 +133,37 @@ const initServer = () => {
         .send('<h1>Server up!<h1>');
     })
 
-    .post(SECRET_ROUTE, async (req: Request, res: Response) => {
-      const { message } = req.body;
-      if (message) {
-        console.log('got new message: ', message);
-        const queryUrl = `${process.env.DICT_URI}${message}`;
-        const response = await fetch(queryUrl);
-        if (!response.ok) {
-          console.log('Gramota Error');
-        } else {
-          response
-            .arrayBuffer()
-            .then((arrayBuffer) =>
-              iconv.decode(Buffer.from(arrayBuffer), 'win1251').toString()
-            )
-            .then((convertedString) => {
-              const substr = 'style="padding-left:50px">';
-              const closingTag = '</div';
-              const targetIndex = convertedString.indexOf(substr);
-              const cutIndexLeft = targetIndex + substr.length;
+    .post(SECRET_ROUTE, (req: Request, res: Response) => {
+      const { message }: Update = req.body;
+      if (!message || isBot(message.from)) {
+        // ?? todo: handle empty request
+        handleQuery(res, STATUS_CODES.notFound, 'not found');
+        return;
+      }
+      console.log('got new message: ', message);
 
-              let queryResult = convertedString.slice(cutIndexLeft);
-              const cutIndexRight = queryResult.indexOf(closingTag);
-              queryResult = queryResult.slice(0, cutIndexRight);
-              console.log('queryResult', queryResult);
-              writeFile('./gramota-cut', queryResult);
-            });
-          // const substr = 'style="padding-left:50px">';
-          // const closingTag = '</div';
-          // const targetIndex = queryResult.indexOf(substr);
-          // const cutIndexLeft = targetIndex + substr.length;
-          // const cutIndexRight = queryResult.indexOf(closingTag);
-          // queryResult = queryResult.slice(cutIndexLeft).slice(0, cutIndexRight);
-          // console.log('queryResult', queryResult);
-          // const buffer = iconv.encode(queryResult, 'win1251');
-          // const decodedString = iconv.decode(buffer, 'utf8');
-          // console.log('decodedString', decodedString);
-          //writeFileSync('./gramota-res', queryResult);
-        }
+      const { from, date, text, sticker } = message; //todo: date logging
+
+      const username = from?.first_name ?? botReplies.default_username;
+
+      if (sticker) {
+        handleQuery(res, STATUS_CODES.ok, getReplyToSticker());
+        return;
       }
 
-      res
-        .status(STATUS_CODES.ok)
-        .set({
-          'Content-Type': RESPONSE_CONTENT_TYPE,
-        })
-        .send('ok');
+      if (text && isCommand(text)) {
+        handleQuery(res, STATUS_CODES.ok, getReplyToCommand(username, text));
+        return;
+      }
+
+      if (!text || text.trim().length === 0) {
+        handleQuery(res, STATUS_CODES.ok, getReplyToEmpty(username));
+        return;
+      }
+
+      getReplyToQueryWord(text.trim())
+        .then((result) => handleQuery(res, STATUS_CODES.ok, result))
+        .catch(console.log); //todo: error handling
     })
 
     .all(/./, (_, res: Response) => {

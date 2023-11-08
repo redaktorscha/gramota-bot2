@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import { regexps } from './utils/regexps';
 import iconv from 'iconv-lite';
-import botReplies from './bot/textResources.json';
+import botReplies from './textResources.json';
 
 type BotCommandType = 'start' | 'help' | 'info';
 

@@ -1,4 +1,4 @@
-import botReplies from './bot/textResources.json';
+import botReplies from './textResources.json';
 import { regexps } from './utils/regexps';
 import { readFileSync } from 'node:fs';
 import path from 'path';

@@ -1,6 +1,7 @@
 todo
 *workspace
 node_modules/
+dist/
 telapi
 offset
 *.pem
@@ -9,3 +10,5 @@ offset
 *log
 *.dockerignore
 *.yml
+gr
+gr*

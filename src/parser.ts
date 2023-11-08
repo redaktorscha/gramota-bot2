@@ -37,9 +37,9 @@ type AccentLetterType = (typeof ACCENTS)[number];
 const isAccentedLetter = (letter: string): letter is AccentLetterType =>
   ACCENTS.includes(letter as AccentLetterType);
 
-const removeTags = (html: string) => {
-  const { htmlTags } = regexps;
-  return html.replace(htmlTags, '');
+const removeUnsupportedTags = (html: string) => {
+  const { unsupportedHtmlTags } = regexps;
+  return html.replace(unsupportedHtmlTags, '');
 };
 
 /**
@@ -53,7 +53,26 @@ enum pageTargets {
   LineBreaks = '<br><br>',
   NotFound = 'искомое слово отсутствует',
   FoundSimilar = 'Похожие слова',
-  HasAccents = '<span class="accent">',
+  AccentClass = '<span class="accent">',
+  SupTag = '<sup>',
+}
+
+const Sups = ['\u2070', '\u00B9', '\u00B2', '\u00B3', '\u2074', '\u2075', '\u2076', '\u2077', '\u2078', '\u2079'] as const;
+
+const handleSups = (str: string) => {
+
+  const isSupIndex = (s: string) => Number(s) < Sups.length && Number(s) >= 0;
+
+  return str
+  .split(pageTargets.SupTag)
+
+  .map((el) => {
+    if (isSupIndex(el[0])) {
+      return `${Sups[Number(el[0])]}${el.slice(1)}`;
+    }
+    return el;
+  })
+  .join('');
 }
 
 const cutAnswerString = (
@@ -61,12 +80,10 @@ const cutAnswerString = (
   openTag: string,
   closingTag: string
 ) => {
-  const tagLen = openTag.length;
-
-  const leftSliceIndex = htmlString.indexOf(openTag);
+  const tagLen = openTag.length
+  const leftSliceIndex = htmlString.indexOf(openTag) + tagLen;
   let resultString = htmlString.slice(leftSliceIndex);
   const rightSliceIndex = resultString.indexOf(closingTag);
-
   return resultString.slice(0, rightSliceIndex);
 };
 
@@ -97,14 +114,14 @@ const insertAccents = (str: string) => {
   const isUpperCasedChar = (char: string) => char.toUpperCase() === char;
 
   return str
-    .split(pageTargets.HasAccents)
+    .split(pageTargets.AccentClass)
 
     .map((el) => {
       if (isAccentedLetter(el[0])) {
         const letterWithAccent = isUpperCasedChar(el[0])
           ? `${el[0]}\u0341`
           : `${el[0]}\u0301`;
-        el = `${letterWithAccent}${el.slice(1)}`;
+        return `${letterWithAccent}${el.slice(1)}`;
       }
       return el;
     })
@@ -129,11 +146,16 @@ const parse = (html: string) => {
     answerString = insertLineBreaks(answerString);
   }
 
-  if (answerString.includes(pageTargets.HasAccents)) {
-    return removeTags(insertAccents(answerString));
-  } else {
-    return removeTags(answerString);
+  if (answerString.includes(pageTargets.SupTag)) {
+    answerString = handleSups(answerString);
   }
+
+  if (answerString.includes(pageTargets.AccentClass)) {
+    answerString = insertAccents(answerString)
+  }
+
+  
+    return removeUnsupportedTags(answerString);
 
   // let leftSliceIndex = html.indexOf(pageTargets.OpeningTagDiv)
   // const targetIndex = convertedString.indexOf(substr);
@@ -148,6 +170,6 @@ const parse = (html: string) => {
 
 // export default parse;
 
-const txt = readFileSync(path.join(__dirname, '..', 'gr-bts'), 'utf-8');
+const txt = readFileSync(path.join(__dirname, '..', 'gr-lop'), 'utf-8');
 
 console.log(parse(txt));

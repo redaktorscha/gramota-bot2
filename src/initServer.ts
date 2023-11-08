@@ -1,11 +1,16 @@
-//@ts-check
-
 import express, { Request, Response, NextFunction } from 'express';
-import { writeFile } from 'node:fs/promises';
+import { regexps } from './utils/regexps';
 import iconv from 'iconv-lite';
-import botReplies from './textResources.json';
+import botReplies from './bot/textResources.json';
 
 type BotCommandType = 'start' | 'help' | 'info';
+
+//todo: different dictionaries support
+enum Dictionaries {
+  Orthography = 'lop',
+  Explanatory = 'bts',
+  Orthoepy = 'zar',
+}
 
 import type {
   Update,
@@ -28,6 +33,7 @@ const BOT_TOKEN = process.env.BOT_TOKEN || '';
 const DICT_URI = process.env.DICT_URI || '';
 const SECRET_ROUTE = `/${BOT_TOKEN}/`;
 const TARGET_ENCODING = 'win1251';
+const MAX_QUERY_LENGTH = 50;
 
 const errorHandler = (
   error: Error,
@@ -37,7 +43,7 @@ const errorHandler = (
 ) => {
   res
     .status(STATUS_CODES.errorServer)
-    .send(`Oops, something went wrong! ${error.message}`);
+    .send(`Ой, что-то пошло не так! ${error.message}`); //todo: logging
 };
 
 // const testRouteHandler = () => {
@@ -58,9 +64,24 @@ const isBot = (user: User | undefined) => user && user.is_bot;
 const isCommand = (message: string) => message.startsWith('/');
 
 const isSupportedCommand = (
-  command: string | BotCommandType
+  command: string
 ): command is BotCommandType =>
-  command === 'start' || command === 'info' || command === 'help';
+ ['start','info','help'].includes(command);
+
+const normalizeQuery = (query: string) => query.trim().toLowerCase();
+
+/**
+ * the query should consist of cyrillic chars only, max length to avoid spam queries,
+ * '*' and '?'/'???" are valid, 3 '?' is valid but 3 '*' and asterisks only aren't valid
+ */
+const isValidQuery = (query: string) => {
+  const { onlyAsteriks, allowedChars } = regexps;
+  return (
+    !new RegExp(onlyAsteriks).test(query) &&
+    new RegExp(allowedChars).test(query) &&
+    query.length <= MAX_QUERY_LENGTH
+  );
+};
 
 const getReplyToCommand = (
   userName: string,
@@ -70,7 +91,7 @@ const getReplyToCommand = (
     return botReplies.unsupported_command;
   }
   if (botCommand === 'start') {
-    return `${botReplies.greet}, ${userName}!\n ${botReplies.start}`;
+    return `${botReplies.greet}, ${userName}!\n${botReplies.start}`;
   } else {
     return botReplies[botCommand];
   }
@@ -78,16 +99,16 @@ const getReplyToCommand = (
 
 const getReplyToSticker = () => botReplies.sticker;
 
-const getReplyToEmpty = (userName: string) =>
-  `${userName}, ${botReplies.empty}`;
+const getReplyToEmpty = () => botReplies.empty;
 
 const getReplyToQueryWord = (word: string) => {
-  const queryUri = getQueryUri(DICT_URI, word.trim());
+  const queryUri = getQueryUri(DICT_URI, word);
+  console.log('queryUri', queryUri);
   return fetchBufferedResults(queryUri)
     .then((arrayBuffer) =>
       decodeFetchResults(Buffer.from(arrayBuffer), TARGET_ENCODING)
     )
-    .then((convertedString) => {
+    .then((convertedString) => { // todo: add parser here
       const substr = 'style="padding-left:50px">';
       const closingTag = '</div';
       const targetIndex = convertedString.indexOf(substr);
@@ -101,8 +122,11 @@ const getReplyToQueryWord = (word: string) => {
     });
 };
 
-const getQueryUri = (dictUri: string, queryString: string) =>
-  `${dictUri}${queryString}`;
+const getQueryUri = (
+  dictUri: string,
+  queryString: string,
+  dict = Dictionaries.Orthography
+) => `${dictUri}${queryString}&${dict}=x`;
 
 const decodeFetchResults = (buffer: Buffer, encodingType: string) =>
   iconv.decode(buffer, encodingType).toString();
@@ -110,7 +134,7 @@ const decodeFetchResults = (buffer: Buffer, encodingType: string) =>
 const fetchBufferedResults = async (uri: string) => {
   const response = await fetch(uri);
   if (!response.ok) {
-    return Promise.reject('gramota error'); // todo: handle gramota errors
+    return Promise.reject('gramota error'); // todo: handle gramota errors!!!! 
   }
   const result = await response.arrayBuffer();
   return result;
@@ -152,16 +176,23 @@ const initServer = () => {
       }
 
       if (text && isCommand(text)) {
-        handleQuery(res, STATUS_CODES.ok, getReplyToCommand(username, text));
+        handleQuery(res, STATUS_CODES.ok, getReplyToCommand(username, text.slice(1))); //slice '/'
         return;
       }
 
       if (!text || text.trim().length === 0) {
-        handleQuery(res, STATUS_CODES.ok, getReplyToEmpty(username));
+        handleQuery(res, STATUS_CODES.ok, getReplyToEmpty());
         return;
       }
 
-      getReplyToQueryWord(text.trim())
+      const normalizedQueryWord = normalizeQuery(text);
+
+      if (!isValidQuery(normalizedQueryWord)) {
+        handleQuery(res, STATUS_CODES.ok, botReplies.unsupported_query);
+        return;
+      }
+
+      getReplyToQueryWord(normalizedQueryWord)
         .then((result) => handleQuery(res, STATUS_CODES.ok, result))
         .catch(console.log); //todo: error handling
     })

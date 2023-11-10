@@ -107,17 +107,13 @@ const insertLineBreaks = (str: string) => {
 };
 
 const insertAccents = (str: string) => {
-  const isUpperCasedChar = (char: string) => char.toUpperCase() === char;
 
   return str
     .split(pageTargets.AccentClass)
 
     .map((el) => {
       if (isAccentedLetter(el[0])) {
-        const letterWithAccent = isUpperCasedChar(el[0])
-          ? `${el[0]}\u0341`
-          : `${el[0]}\u0301`;
-        return `${letterWithAccent}${el.slice(1)}`;
+        return `${el[0]}\u0301${el.slice(1)}`;
       }
       return el;
     })
@@ -126,8 +122,8 @@ const insertAccents = (str: string) => {
 
 const parse = (html: string) => {
   if (
-    !html.includes(pageTargets.OpeningTagDiv) &&
-    !html.includes(pageTargets.OpeningTagP)
+    html.includes(pageTargets.NotFound) &&
+    !html.includes(pageTargets.FoundSimilar)
   ) {
     return botReplies.not_found;
   }
@@ -164,6 +160,6 @@ const parse = (html: string) => {
 
 // export default parse;
 
-const txt = readFileSync(path.join(__dirname, '..', 'gr-lop'), 'utf-8');
+const txt = readFileSync(path.join(__dirname, '..', 'gr-zar'), 'utf-8');
 
 console.log(parse(txt));

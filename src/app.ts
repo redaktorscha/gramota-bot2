@@ -1,7 +1,7 @@
 // import logError from './tools/logError.js';
 import 'dotenv/config';
 
-import initServer from './bot/initServer.js';
+import initServer from './initServer';
 
 initServer();
 // /**

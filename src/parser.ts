@@ -3,7 +3,33 @@ import { regexps } from './utils/regexps';
 import { readFileSync } from 'node:fs';
 import path from 'path';
 
-const ACCENTCHARS = [
+// const ACUTEACCENTLETTERS = {
+//   'а': 'а́',
+//   'е': 'е́',
+//   'и': 'и́',
+//   'о': 'о́',
+//   'у': 'у́',
+//   'ы': 'ы́',
+//   'э': 'э́',
+//   'ю': 'ю́',
+//   'я': 'я́',
+//   'А': 'А́',
+//   'Е': 'Е́',
+//   'И': 'И́',
+//   'О': 'О́',
+//   'У': 'У́',
+//   'Ы': 'Ы́',
+//   'Э': 'Э́',
+//   'Ю': 'Ю́',
+//   'Я': 'Я́',
+// } as const;
+
+
+
+
+// const MAYBEACCENTCHARS = Object.keys(ACUTEACCENTLETTERS);
+
+const MAYBEACCENTCHARS = [
   'а',
   'е',
   'и',
@@ -24,10 +50,12 @@ const ACCENTCHARS = [
   'Я',
 ] as const;
 
-type AccentLetterType = (typeof ACCENTCHARS)[number];
 
-const isAccentedLetter = (letter: string): letter is AccentLetterType =>
-ACCENTCHARS.includes(letter as AccentLetterType);
+type AccentCharType = (typeof MAYBEACCENTCHARS)[number];
+
+
+const isAccentedLetter = (letter: string): letter is AccentCharType =>
+  MAYBEACCENTCHARS.includes(letter as AccentCharType);
 
 const removeUnsupportedTags = (html: string) => {
   const { unsupportedHtmlTags } = regexps;
@@ -74,6 +102,116 @@ const handleSups = (str: string) => {
     .join('');
 };
 
+const validateMarkup = (tags: string[]) => {
+  const wrongIndices: number[] = [];
+
+  let bCounter = 0;
+  let iCounter = 0;
+
+  for (let i = 0; i < tags.length; i += 1) {
+    const tag = tags[i];
+    if (tag === '</b>') {
+      bCounter -= 1;
+
+      if (bCounter < 0) {
+        wrongIndices.push(i);
+        bCounter = 0;
+      }
+    }
+
+    if (tag === '</i>') {
+      iCounter -= 1;
+      if (iCounter < 0) {
+        wrongIndices.push(i);
+        iCounter = 0;
+      }
+    }
+
+    if (tag === '<b>') {
+      bCounter += 1;
+
+      if (bCounter === 2) {
+        wrongIndices.push(i);
+        bCounter = 1;
+      }
+    }
+
+    if (tag === '<i>') {
+      iCounter += 1;
+
+      if (iCounter === 2) {
+        wrongIndices.push(i);
+        iCounter = 1;
+      }
+    }
+  }
+  return wrongIndices;
+};
+
+const fixIncorrectMarkup = (s: string) => {
+  let str = s;
+  str = str.replace('<<', '<');
+
+  const tagsColl = str.match(regexps.htmlTags);
+
+  if (!tagsColl) {
+    return str;
+  }
+
+  const wrongIndices = validateMarkup(tagsColl);
+  if (wrongIndices.length === 0) {
+    return str;
+  }
+
+  const newStr: string[] = [];
+
+  let i = 1;
+  let j = 1;
+  let prevI = 0;
+  let targetIndex = 0;
+
+  while (i < str.length && targetIndex < wrongIndices.length) {
+    i = str.indexOf(tagsColl[j], i);
+    const currentTag = tagsColl[j];
+    const pos = wrongIndices[targetIndex];
+    if (j === pos) {
+      newStr.push(str.slice(prevI, i));
+      prevI = i + currentTag.length;
+      targetIndex += 1;
+    }
+
+    j += 1;
+    i += currentTag.length;
+  }
+  newStr.push(str.slice(prevI));
+  console.log(newStr.join(''));
+  return newStr.join('');
+};
+
+const handleSpecialChars = (s: string) => {
+
+  let str = s;
+  let i = str.indexOf('&');
+
+  while (i !== -1) {
+    let j = i;
+
+    while (str[j] !== ';') {
+      j += 1;
+    }
+    str = `${str.slice(0, i)}${str.slice(j + 1)}`;
+    i = str.indexOf('&');
+  }
+
+  return str;
+};
+
+const handleHTML = (s: string) => {
+  const clearedString = removeUnsupportedTags(s);
+  const withoutEntities = handleSpecialChars(clearedString);
+  return fixIncorrectMarkup(withoutEntities);
+};
+
 const cutAnswerString = (
   htmlString: string,
   openTag: string,
@@ -85,7 +223,6 @@ const cutAnswerString = (
   const rightSliceIndex = resultString.indexOf(closingTag);
   return resultString.slice(0, rightSliceIndex);
 };
-
 
 const insertLineBreaks = (str: string) => {
   const hasLineBreaksAtTheEnd = (s: string) =>
@@ -107,12 +244,12 @@ const insertLineBreaks = (str: string) => {
 };
 
 const insertAccents = (str: string) => {
-
   return str
     .split(pageTargets.AccentClass)
 
     .map((el) => {
       if (isAccentedLetter(el[0])) {
+        // return `${ACUTEACCENTLETTERS[el[0]]}${el.slice(1)}`;
         return `${el[0]}\u0301${el.slice(1)}`;
       }
       return el;
@@ -138,9 +275,7 @@ const parse = (html: string) => {
         pageTargets.ClosingTagDiv
       );
 
-  if (answerString.includes(pageTargets.LineBreaks)) {
-    answerString = insertLineBreaks(answerString);
-  }
+  answerString = insertLineBreaks(answerString);
 
   if (answerString.includes(pageTargets.SupTag)) {
     answerString = handleSups(answerString);
@@ -150,16 +285,14 @@ const parse = (html: string) => {
     answerString = insertAccents(answerString);
   }
 
-  answerString = removeUnsupportedTags(answerString);
-
   if (isNotExactMatch) {
-    return `${botReplies.found_similar}${answerString}`;
+    return `${botReplies.found_similar}${handleHTML(answerString)}`;
   }
-  return answerString;
+  return handleHTML(answerString);
 };
 
 // export default parse;
 
-const txt = readFileSync(path.join(__dirname, '..', 'gr-zar'), 'utf-8');
+const txt = readFileSync(path.join(__dirname, '..', 'gr-lop'), 'utf-8');
 
 console.log(parse(txt));

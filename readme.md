@@ -1,7 +1,7 @@
 # gramota-bot2
 
 ### General info
-- A simple Telegram bot that can check word spelling and insert accent characters. My training project. Please have a look at my other Telegram bot (gramota-bot).
+- A Telegram bot that can check Russian word spelling and insert accent characters
 
 ### Features
 - Uses dictionary at www.gramota.ru as source;
@@ -10,8 +10,8 @@
 
 
 ### Technologies
-- curl 
-- node-fetch
+- express
+- fetch API
 
 ### Launch
-- node app.js
+- npm start

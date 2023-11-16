@@ -38,6 +38,7 @@ const TEST_RESPONSE = '<h1>Server up!<h1>';
 const TARGET_ENCODING = 'win1251';
 const MAX_QUERY_LENGTH = 50;
 const MAX_FETCH_RETRIES = 2;
+const GRAMOTA_ERROR = 'GramotaError';
 
 const errorHandler = (
   error: Error,
@@ -53,6 +54,38 @@ const errorHandler = (
 // const testRouteHandler = () => {
 
 // }
+
+const retry = (func: Function, delay: number, maxRetries: number) => {
+  return function _retried(arg: string) {
+    console.log('run retr');
+    let retries = 0;
+    return new Promise((resolve, reject) => {
+      const setTimer = () => {
+        setTimeout(() => {
+          retries += 1;
+          console.log('retries', retries);
+          func(arg)
+            .then((result: string) => resolve(result))
+            .catch((error: Error) => {
+              console.error(error); // logging
+              if (retries === maxRetries) {
+                console.log('rejected');
+                reject(error);
+              } else {
+                setTimer();
+              }
+            }, delay);
+        });
+      };
+      func(arg)
+        .then((result: string) => resolve(result))
+        .catch((error: Error) => {
+          console.error('first time error', error); // logging
+          setTimer();
+        });
+    });
+  };
+};
 
 const handleQuery = (response: Response, status: number, reply: string) => {
   response
@@ -126,12 +159,15 @@ const decodeFetchResults = (buffer: Buffer, encodingType: string) =>
 
 const fetchBufferedResults = async (uri: string) => {
   const response = await fetch(uri);
+  console.log('response: ', response);
   if (!response.ok) {
-    return Promise.reject('gramota error'); // todo: handle gramota errors!!!!
+    return Promise.reject(new Error(GRAMOTA_ERROR));
   }
   const result = await response.arrayBuffer();
   return result;
 };
+
+const fetchWithRetry = retry(fetchBufferedResults, 1000, MAX_FETCH_RETRIES);
 
 const handleTelegramUpdates = (updateData: Message) => {};
 
@@ -190,7 +226,13 @@ const initServer = () => {
 
       getReplyToQueryWord(normalizedQueryWord)
         .then((result) => handleQuery(res, STATUS_CODES.ok, result))
-        .catch(console.log); //todo: error handling
+        .catch((err) => {
+          if (err === GRAMOTA_ERROR) {
+            handleQuery(res, STATUS_CODES.ok, botReplies.error_dict);
+          } else {
+            handleQuery(res, STATUS_CODES.ok, botReplies.error_bot); // todo: add logging ?? which code?
+          }
+        });
     })
 
     .all(/./, (_, res: Response) => {

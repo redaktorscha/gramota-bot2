@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import { regexps } from './utils/regexps';
 import iconv from 'iconv-lite';
 import botReplies from './textResources.json';
+import parse from './parser';
 
 type BotCommandType = 'start' | 'help' | 'info';
 
@@ -32,8 +33,11 @@ const PORT = Number(process.env.PORT) || 3000;
 const BOT_TOKEN = process.env.BOT_TOKEN || '';
 const DICT_URI = process.env.DICT_URI || '';
 const SECRET_ROUTE = `/${BOT_TOKEN}/`;
+const TEST_ROUTE = `/test/`;
+const TEST_RESPONSE = '<h1>Server up!<h1>';
 const TARGET_ENCODING = 'win1251';
 const MAX_QUERY_LENGTH = 50;
+const MAX_FETCH_RETRIES = 2;
 
 const errorHandler = (
   error: Error,
@@ -63,10 +67,8 @@ const isBot = (user: User | undefined) => user && user.is_bot;
 
 const isCommand = (message: string) => message.startsWith('/');
 
-const isSupportedCommand = (
-  command: string
-): command is BotCommandType =>
- ['start','info','help'].includes(command);
+const isSupportedCommand = (command: string): command is BotCommandType =>
+  ['start', 'info', 'help'].includes(command);
 
 const normalizeQuery = (query: string) => query.trim().toLowerCase();
 
@@ -108,17 +110,8 @@ const getReplyToQueryWord = (word: string) => {
     .then((arrayBuffer) =>
       decodeFetchResults(Buffer.from(arrayBuffer), TARGET_ENCODING)
     )
-    .then((convertedString) => { // todo: add parser here
-      const substr = 'style="padding-left:50px">';
-      const closingTag = '</div';
-      const targetIndex = convertedString.indexOf(substr);
-      const cutIndexLeft = targetIndex + substr.length;
-
-      let queryResult = convertedString.slice(cutIndexLeft);
-      const cutIndexRight = queryResult.indexOf(closingTag);
-      queryResult = queryResult.slice(0, cutIndexRight);
-      console.log('queryResult', queryResult);
-      return queryResult;
+    .then((convertedString) => {
+      return parse(convertedString);
     });
 };
 
@@ -134,7 +127,7 @@ const decodeFetchResults = (buffer: Buffer, encodingType: string) =>
 const fetchBufferedResults = async (uri: string) => {
   const response = await fetch(uri);
   if (!response.ok) {
-    return Promise.reject('gramota error'); // todo: handle gramota errors!!!! 
+    return Promise.reject('gramota error'); // todo: handle gramota errors!!!!
   }
   const result = await response.arrayBuffer();
   return result;
@@ -148,19 +141,18 @@ const initServer = () => {
   app
     .use(express.json())
 
-    .get('/test/', (_, res: Response) => {
+    .get(TEST_ROUTE, (_, res: Response) => {
       res
         .status(STATUS_CODES.ok)
         .set({
           'Content-Type': RESPONSE_CONTENT_TYPE,
         })
-        .send('<h1>Server up!<h1>');
+        .send(TEST_RESPONSE);
     })
 
     .post(SECRET_ROUTE, (req: Request, res: Response) => {
       const { message }: Update = req.body;
       if (!message || isBot(message.from)) {
-        // ?? todo: handle empty request
         handleQuery(res, STATUS_CODES.notFound, 'not found');
         return;
       }
@@ -176,7 +168,11 @@ const initServer = () => {
       }
 
       if (text && isCommand(text)) {
-        handleQuery(res, STATUS_CODES.ok, getReplyToCommand(username, text.slice(1))); //slice '/'
+        handleQuery(
+          res,
+          STATUS_CODES.ok,
+          getReplyToCommand(username, text.slice(1))
+        ); //slice '/'
         return;
       }
 

@@ -1,7 +1,7 @@
 import botReplies from './textResources.json';
 import { regexps } from './utils/regexps';
-import { readFileSync } from 'node:fs';
-import path from 'path';
+// import { readFileSync } from 'node:fs';
+// import path from 'path';
 
 // const ACUTEACCENTLETTERS = {
 //   'а': 'а́',
@@ -24,7 +24,7 @@ import path from 'path';
 //   'Я': 'Я́',
 // } as const;
 
-
+const ACCENT_SYMBOL = '\u0301';
 
 
 // const MAYBEACCENTCHARS = Object.keys(ACUTEACCENTLETTERS);
@@ -72,6 +72,7 @@ enum pageTargets {
   FoundSimilar = 'Похожие слова',
   AccentClass = '<span class="accent">',
   SupTag = '<sup>',
+  specialEntity = '&'
 }
 
 const Sups = [
@@ -191,7 +192,7 @@ const fixIncorrectMarkup = (s: string) => {
 const handleSpecialChars = (s: string) => {
 
   let str = s;
-  let i = str.indexOf('&');
+  let i = str.indexOf(pageTargets.specialEntity);
 
   while (i !== -1) {
     let j = i;
@@ -200,7 +201,7 @@ const handleSpecialChars = (s: string) => {
       j += 1;
     }
     str = `${str.slice(0, i)}${str.slice(j + 1)}`;
-    i = str.indexOf('&');
+    i = str.indexOf(pageTargets.specialEntity);
   }
 
   return str;
@@ -250,7 +251,7 @@ const insertAccents = (str: string) => {
     .map((el) => {
       if (isAccentedLetter(el[0])) {
         // return `${ACUTEACCENTLETTERS[el[0]]}${el.slice(1)}`;
-        return `${el[0]}\u0301${el.slice(1)}`;
+        return `${el[0]}${ACCENT_SYMBOL}${el.slice(1)}`;
       }
       return el;
     })
@@ -293,6 +294,6 @@ const parse = (html: string) => {
 
 export default parse;
 
-//const txt = readFileSync(path.join(__dirname, '..', 'gr-bts'), 'utf-8');
+// const txt = readFileSync(path.join(__dirname, '..', 'gr-lop'), 'utf-8');
 
 // console.log(parse(txt));

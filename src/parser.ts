@@ -291,8 +291,8 @@ const parse = (html: string) => {
   return handleHTML(answerString);
 };
 
-// export default parse;
+export default parse;
 
-const txt = readFileSync(path.join(__dirname, '..', 'gr-lop'), 'utf-8');
+//const txt = readFileSync(path.join(__dirname, '..', 'gr-bts'), 'utf-8');
 
-console.log(parse(txt));
+// console.log(parse(txt));

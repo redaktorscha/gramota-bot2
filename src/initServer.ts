@@ -25,7 +25,6 @@ const STATUS_CODES = {
   ok: 200,
   errorServer: 500,
   notFound: 404,
-  accessDenied: 403,
 };
 
 const RESPONSE_CONTENT_TYPE = 'text/html; charset=utf-8';
@@ -35,10 +34,13 @@ const DICT_URI = process.env.DICT_URI || '';
 const SECRET_ROUTE = `/${BOT_TOKEN}/`;
 const TEST_ROUTE = `/test/`;
 const TEST_RESPONSE = '<h1>Server up!<h1>';
+const NOT_FOUND_RESPONSE = 'Nothing here...';
 const TARGET_ENCODING = 'win1251';
 const MAX_QUERY_LENGTH = 50;
 const MAX_FETCH_RETRIES = 2;
 const GRAMOTA_ERROR = 'GramotaError';
+const NETWORK_ERROR = 'NetworkError';
+const UNKNOWN_ERROR = 'UnknownError';
 
 const errorHandler = (
   error: Error,
@@ -46,17 +48,18 @@ const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  res
-    .status(STATUS_CODES.errorServer)
-    .send(`Ой, что-то пошло не так! ${error.message}`); //todo: logging
+  res.status(STATUS_CODES.errorServer).send(UNKNOWN_ERROR); //todo: logging
 };
 
 // const testRouteHandler = () => {
 
 // }
+interface IFetchFunc {
+  (arg: string): Promise<ArrayBuffer>;
+}
 
-const retry = (func: Function, delay: number, maxRetries: number) => {
-  return function _retried(arg: string) {
+const retry = (func: IFetchFunc, delay: number, maxRetries: number) => {
+  return function _retried(arg: string): Promise<ArrayBuffer> {
     console.log('run retr');
     let retries = 0;
     return new Promise((resolve, reject) => {
@@ -65,7 +68,7 @@ const retry = (func: Function, delay: number, maxRetries: number) => {
           retries += 1;
           console.log('retries', retries);
           func(arg)
-            .then((result: string) => resolve(result))
+            .then((result) => resolve(result))
             .catch((error: Error) => {
               console.error(error); // logging
               if (retries === maxRetries) {
@@ -74,11 +77,11 @@ const retry = (func: Function, delay: number, maxRetries: number) => {
               } else {
                 setTimer();
               }
-            }, delay);
-        });
+            });
+        }, delay);
       };
       func(arg)
-        .then((result: string) => resolve(result))
+        .then((result) => resolve(result))
         .catch((error: Error) => {
           console.error('first time error', error); // logging
           setTimer();
@@ -139,7 +142,7 @@ const getReplyToEmpty = () => botReplies.empty;
 const getReplyToQueryWord = (word: string) => {
   const queryUri = getQueryUri(DICT_URI, word);
   console.log('queryUri', queryUri);
-  return fetchBufferedResults(queryUri)
+  return fetchWithRetry(queryUri)
     .then((arrayBuffer) =>
       decodeFetchResults(Buffer.from(arrayBuffer), TARGET_ENCODING)
     )
@@ -158,13 +161,15 @@ const decodeFetchResults = (buffer: Buffer, encodingType: string) =>
   iconv.decode(buffer, encodingType).toString();
 
 const fetchBufferedResults = async (uri: string) => {
-  const response = await fetch(uri);
-  console.log('response: ', response);
-  if (!response.ok) {
-    return Promise.reject(new Error(GRAMOTA_ERROR));
-  }
-  const result = await response.arrayBuffer();
-  return result;
+  return fetch(uri)
+    .catch((_) => Promise.reject(new Error(NETWORK_ERROR))) // log
+    .then((response) => {
+      console.log('response status: ', response.status);
+      if (!response.ok) {
+        return Promise.reject(new Error(GRAMOTA_ERROR)); // log
+      }
+      return response.arrayBuffer();
+    });
 };
 
 const fetchWithRetry = retry(fetchBufferedResults, 1000, MAX_FETCH_RETRIES);
@@ -226,11 +231,11 @@ const initServer = () => {
 
       getReplyToQueryWord(normalizedQueryWord)
         .then((result) => handleQuery(res, STATUS_CODES.ok, result))
-        .catch((err) => {
-          if (err === GRAMOTA_ERROR) {
-            handleQuery(res, STATUS_CODES.ok, botReplies.error_dict);
+        .catch((err: Error) => {
+          if (err.message === GRAMOTA_ERROR) {
+            handleQuery(res, STATUS_CODES.ok, botReplies.error_dict); // log gramota error
           } else {
-            handleQuery(res, STATUS_CODES.ok, botReplies.error_bot); // todo: add logging ?? which code?
+            handleQuery(res, STATUS_CODES.ok, botReplies.error_bot); // todo: add logging network error
           }
         });
     })
@@ -241,13 +246,14 @@ const initServer = () => {
         .set({
           'Content-Type': RESPONSE_CONTENT_TYPE,
         })
-        .send('Nothing here...');
+        .send(NOT_FOUND_RESPONSE);
     })
     .use(errorHandler);
 
-  app.listen(PORT, () =>
-    console.log(`Listening at port ${PORT}, Process: ${process.pid}`)
-  );
+  app.listen(PORT, () => {
+    console.log(`Listening at port ${PORT}, Process: ${process.pid}`);
+    // await setWebhook
+  });
 };
 
 export default initServer;

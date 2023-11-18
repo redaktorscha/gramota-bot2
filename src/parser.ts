@@ -1,9 +1,12 @@
 import botReplies from './textResources.json';
 import { regexps } from './utils/regexps';
 // import { readFileSync } from 'node:fs';
-// import path from 'path';
 
-// const pipe = (arr, word) => arr.reduce((acc, cur) => cur(acc), word)
+// import path from 'path';
+type PipeFunctionType = (str: string) => string;
+
+const pipe = (arr: PipeFunctionType[], word: string) =>
+  arr.reduce((acc, cur) => cur(acc), word);
 
 // const ACUTEACCENTLETTERS = {
 //   'а': 'а́',
@@ -28,7 +31,6 @@ import { regexps } from './utils/regexps';
 
 const ACCENT_SYMBOL = '\u0301';
 
-
 // const MAYBEACCENTCHARS = Object.keys(ACUTEACCENTLETTERS);
 
 const MAYBEACCENTCHARS = [
@@ -52,9 +54,7 @@ const MAYBEACCENTCHARS = [
   'Я',
 ] as const;
 
-
 type AccentCharType = (typeof MAYBEACCENTCHARS)[number];
-
 
 const isAccentedLetter = (letter: string): letter is AccentCharType =>
   MAYBEACCENTCHARS.includes(letter as AccentCharType);
@@ -74,7 +74,7 @@ enum pageTargets {
   FoundSimilar = 'Похожие слова',
   AccentClass = '<span class="accent">',
   SupTag = '<sup>',
-  specialEntity = '&'
+  specialEntity = '&',
 }
 
 const Sups = [
@@ -91,6 +91,9 @@ const Sups = [
 ] as const;
 
 const handleSups = (str: string) => {
+  if (!str.includes(pageTargets.SupTag)) {
+    return str;
+  }
   const isSupIndex = (s: string) => Number(s) < Sups.length && Number(s) >= 0;
 
   return str
@@ -192,7 +195,6 @@ const fixIncorrectMarkup = (s: string) => {
 };
 
 const handleSpecialChars = (s: string) => {
-
   let str = s;
   let i = str.indexOf(pageTargets.specialEntity);
 
@@ -215,17 +217,14 @@ const handleHTML = (s: string) => {
   return fixIncorrectMarkup(withoutEntities);
 };
 
-const cutAnswerString = (
-  htmlString: string,
-  openTag: string,
-  closingTag: string
-) => {
-  const tagLen = openTag.length;
-  const leftSliceIndex = htmlString.indexOf(openTag) + tagLen;
-  let resultString = htmlString.slice(leftSliceIndex);
-  const rightSliceIndex = resultString.indexOf(closingTag);
-  return resultString.slice(0, rightSliceIndex);
-};
+const cutAnswerString =
+  (openTag: string, closingTag: string) => (htmlString: string) => {
+    const tagLen = openTag.length;
+    const leftSliceIndex = htmlString.indexOf(openTag) + tagLen;
+    let resultString = htmlString.slice(leftSliceIndex);
+    const rightSliceIndex = resultString.indexOf(closingTag);
+    return resultString.slice(0, rightSliceIndex);
+  };
 
 const insertLineBreaks = (str: string) => {
   const hasLineBreaksAtTheEnd = (s: string) =>
@@ -247,6 +246,9 @@ const insertLineBreaks = (str: string) => {
 };
 
 const insertAccents = (str: string) => {
+  if (!str.includes(pageTargets.AccentClass)) {
+    return str;
+  }
   return str
     .split(pageTargets.AccentClass)
 
@@ -270,32 +272,44 @@ const parse = (html: string) => {
 
   const isNotExactMatch = html.includes(pageTargets.FoundSimilar);
 
-  let answerString = isNotExactMatch
-    ? cutAnswerString(html, pageTargets.OpeningTagP, pageTargets.ClosingTagP)
-    : cutAnswerString(
-        html,
-        pageTargets.OpeningTagDiv,
-        pageTargets.ClosingTagDiv
-      );
+  // let answerString = isNotExactMatch
+  //   ? cutAnswerString(html, pageTargets.OpeningTagP, pageTargets.ClosingTagP)
+  //   : cutAnswerString(
+  //       html,
+  //       pageTargets.OpeningTagDiv,
+  //       pageTargets.ClosingTagDiv
+  //     );
 
-  answerString = insertLineBreaks(answerString);
+  // answerString = insertLineBreaks(answerString);
 
-  if (answerString.includes(pageTargets.SupTag)) {
-    answerString = handleSups(answerString);
-  }
+  // if (answerString.includes(pageTargets.SupTag)) {
+  //   answerString = handleSups(answerString);
+  // }
 
-  if (answerString.includes(pageTargets.AccentClass)) {
-    answerString = insertAccents(answerString);
-  }
+  // if (answerString.includes(pageTargets.AccentClass)) {
+  //   answerString = insertAccents(answerString);
+  // }
+
+  // if (isNotExactMatch) {
+  //   return `${botReplies.found_similar}${handleHTML(answerString)}`;
+  // }
+  // return handleHTML(answerString);
 
   if (isNotExactMatch) {
-    return `${botReplies.found_similar}${handleHTML(answerString)}`;
+    const answerString = pipe(
+      [cutAnswerString(pageTargets.OpeningTagP, pageTargets.ClosingTagP), insertLineBreaks, handleSups, insertAccents, handleHTML],
+      html
+    );
+    return `${botReplies.found_similar}${answerString}`;
   }
-  return handleHTML(answerString);
+  return pipe(
+    [cutAnswerString(pageTargets.OpeningTagDiv, pageTargets.ClosingTagDiv), insertLineBreaks, handleSups, insertAccents, handleHTML],
+    html
+  );
 };
 
 export default parse;
 
-// const txt = readFileSync(path.join(__dirname, '..', 'gr-lop'), 'utf-8');
+// const txt = readFileSync(path.join(__dirname, '..', 'gr-zar'), 'utf-8');
 
 // console.log(parse(txt));

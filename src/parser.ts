@@ -3,6 +3,8 @@ import { regexps } from './utils/regexps';
 // import { readFileSync } from 'node:fs';
 // import path from 'path';
 
+// const pipe = (arr, word) => arr.reduce((acc, cur) => cur(acc), word)
+
 // const ACUTEACCENTLETTERS = {
 //   'а': 'а́',
 //   'е': 'е́',

@@ -4,6 +4,16 @@ import iconv from 'iconv-lite';
 import botReplies from './textResources.json';
 import parse from './parser';
 
+class CustomError extends Error {
+  statusCode: number;
+
+  constructor(message: string, statusCode: number, name: string) {
+    super(message);
+    this.name = name;
+    this.statusCode = statusCode;
+  }
+}
+
 type BotCommandType = 'start' | 'help' | 'info';
 
 //todo: different dictionaries support
@@ -40,25 +50,29 @@ const MAX_QUERY_LENGTH = 50;
 const MAX_FETCH_RETRIES = 2;
 const GRAMOTA_ERROR = 'GramotaError';
 const NETWORK_ERROR = 'NetworkError';
-const UNKNOWN_ERROR = 'UnknownError';
+const UNKNOWN_ERROR = 'Something went wrong';
 
+// move to src/middleware
 const errorHandler = (
-  error: Error,
+  error: Error | CustomError,
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  res.status(STATUS_CODES.errorServer).send(UNKNOWN_ERROR); //todo: logging
+  console.error(error); // log error.stack
+  const code =
+    error instanceof CustomError ? error.statusCode : STATUS_CODES.errorServer;
+  handleQuery(res, code, error.message ?? UNKNOWN_ERROR); // log
 };
 
-const testRouteHandler =  (req: Request, res: Response) => {
+const testRouteHandler = (req: Request, res: Response) => {
   res
     .status(STATUS_CODES.ok)
     .set({
       'Content-Type': RESPONSE_CONTENT_TYPE,
     })
     .send(TEST_RESPONSE);
-}
+};
 
 const defaultRouteHandler = (req: Request, res: Response) => {
   res
@@ -67,8 +81,7 @@ const defaultRouteHandler = (req: Request, res: Response) => {
       'Content-Type': RESPONSE_CONTENT_TYPE,
     })
     .send(NOT_FOUND_RESPONSE);
-}
-
+};
 
 interface IFetchFunc {
   (arg: string): Promise<ArrayBuffer>;
@@ -76,7 +89,6 @@ interface IFetchFunc {
 
 const retry = (func: IFetchFunc, delay: number, maxRetries: number) => {
   return function _retried(arg: string): Promise<ArrayBuffer> {
-    console.log('run retr');
     let retries = 0;
     return new Promise((resolve, reject) => {
       const setTimer = () => {
@@ -178,11 +190,17 @@ const decodeFetchResults = (buffer: Buffer, encodingType: string) =>
 
 const fetchBufferedResults = async (uri: string) => {
   return fetch(uri)
-    .catch((_) => Promise.reject(new Error(NETWORK_ERROR))) // log
+    .catch((_) =>
+      Promise.reject(
+        new CustomError(botReplies.error_bot, STATUS_CODES.ok, NETWORK_ERROR)
+      )
+    ) // log
     .then((response) => {
       console.log('response status: ', response.status);
       if (!response.ok) {
-        return Promise.reject(new Error(GRAMOTA_ERROR)); // log
+        return Promise.reject(
+          new CustomError(botReplies.error_dict, STATUS_CODES.ok, GRAMOTA_ERROR)
+        ); // log
       }
       return response.arrayBuffer();
     });
@@ -190,7 +208,11 @@ const fetchBufferedResults = async (uri: string) => {
 
 const fetchWithRetry = retry(fetchBufferedResults, 1000, MAX_FETCH_RETRIES);
 
-const webhookRouteHandler = (req: Request, res: Response) => {
+const webhookRouteHandler = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { message }: Update = req.body;
   if (!message || isBot(message.from)) {
     handleQuery(res, STATUS_CODES.ok, botReplies.unsupported_query);
@@ -231,14 +253,9 @@ const webhookRouteHandler = (req: Request, res: Response) => {
   getReplyToQueryWord(normalizedQueryWord)
     .then((result) => handleQuery(res, STATUS_CODES.ok, result))
     .catch((err: Error) => {
-      if (err.message === GRAMOTA_ERROR) {
-        handleQuery(res, STATUS_CODES.ok, botReplies.error_dict); // log gramota error
-      } else {
-        handleQuery(res, STATUS_CODES.ok, botReplies.error_bot); // todo: add logging network error
-      }
+      next(err);
     });
 };
-
 
 const initServer = () => {
   const app = express();

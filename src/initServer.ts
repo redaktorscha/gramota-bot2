@@ -51,9 +51,25 @@ const errorHandler = (
   res.status(STATUS_CODES.errorServer).send(UNKNOWN_ERROR); //todo: logging
 };
 
-// const testRouteHandler = () => {
+const testRouteHandler =  (req: Request, res: Response) => {
+  res
+    .status(STATUS_CODES.ok)
+    .set({
+      'Content-Type': RESPONSE_CONTENT_TYPE,
+    })
+    .send(TEST_RESPONSE);
+}
 
-// }
+const defaultRouteHandler = (req: Request, res: Response) => {
+  res
+    .status(STATUS_CODES.notFound)
+    .set({
+      'Content-Type': RESPONSE_CONTENT_TYPE,
+    })
+    .send(NOT_FOUND_RESPONSE);
+}
+
+
 interface IFetchFunc {
   (arg: string): Promise<ArrayBuffer>;
 }
@@ -174,7 +190,55 @@ const fetchBufferedResults = async (uri: string) => {
 
 const fetchWithRetry = retry(fetchBufferedResults, 1000, MAX_FETCH_RETRIES);
 
-const handleTelegramUpdates = (updateData: Message) => {};
+const webhookRouteHandler = (req: Request, res: Response) => {
+  const { message }: Update = req.body;
+  if (!message || isBot(message.from)) {
+    handleQuery(res, STATUS_CODES.ok, botReplies.unsupported_query);
+    return;
+  }
+  console.log('got new message: ', message);
+
+  const { from, date, text, sticker } = message; //todo: date logging
+
+  const username = from?.first_name ?? botReplies.default_username;
+
+  if (sticker) {
+    handleQuery(res, STATUS_CODES.ok, getReplyToSticker());
+    return;
+  }
+
+  if (text && isCommand(text)) {
+    handleQuery(
+      res,
+      STATUS_CODES.ok,
+      getReplyToCommand(username, text.slice(1))
+    ); //slice '/'
+    return;
+  }
+
+  if (!text || text.trim().length === 0) {
+    handleQuery(res, STATUS_CODES.ok, getReplyToEmpty());
+    return;
+  }
+
+  const normalizedQueryWord = normalizeQuery(text);
+
+  if (!isValidQuery(normalizedQueryWord)) {
+    handleQuery(res, STATUS_CODES.ok, botReplies.unsupported_query);
+    return;
+  }
+
+  getReplyToQueryWord(normalizedQueryWord)
+    .then((result) => handleQuery(res, STATUS_CODES.ok, result))
+    .catch((err: Error) => {
+      if (err.message === GRAMOTA_ERROR) {
+        handleQuery(res, STATUS_CODES.ok, botReplies.error_dict); // log gramota error
+      } else {
+        handleQuery(res, STATUS_CODES.ok, botReplies.error_bot); // todo: add logging network error
+      }
+    });
+};
+
 
 const initServer = () => {
   const app = express();
@@ -182,72 +246,12 @@ const initServer = () => {
   app
     .use(express.json())
 
-    .get(TEST_ROUTE, (_, res: Response) => {
-      res
-        .status(STATUS_CODES.ok)
-        .set({
-          'Content-Type': RESPONSE_CONTENT_TYPE,
-        })
-        .send(TEST_RESPONSE);
-    })
+    .get(TEST_ROUTE, testRouteHandler)
 
-    .post(SECRET_ROUTE, (req: Request, res: Response) => {
-      const { message }: Update = req.body;
-      if (!message || isBot(message.from)) {
-        handleQuery(res, STATUS_CODES.notFound, 'not found');
-        return;
-      }
-      console.log('got new message: ', message);
+    .post(SECRET_ROUTE, webhookRouteHandler)
 
-      const { from, date, text, sticker } = message; //todo: date logging
+    .all(/./, defaultRouteHandler)
 
-      const username = from?.first_name ?? botReplies.default_username;
-
-      if (sticker) {
-        handleQuery(res, STATUS_CODES.ok, getReplyToSticker());
-        return;
-      }
-
-      if (text && isCommand(text)) {
-        handleQuery(
-          res,
-          STATUS_CODES.ok,
-          getReplyToCommand(username, text.slice(1))
-        ); //slice '/'
-        return;
-      }
-
-      if (!text || text.trim().length === 0) {
-        handleQuery(res, STATUS_CODES.ok, getReplyToEmpty());
-        return;
-      }
-
-      const normalizedQueryWord = normalizeQuery(text);
-
-      if (!isValidQuery(normalizedQueryWord)) {
-        handleQuery(res, STATUS_CODES.ok, botReplies.unsupported_query);
-        return;
-      }
-
-      getReplyToQueryWord(normalizedQueryWord)
-        .then((result) => handleQuery(res, STATUS_CODES.ok, result))
-        .catch((err: Error) => {
-          if (err.message === GRAMOTA_ERROR) {
-            handleQuery(res, STATUS_CODES.ok, botReplies.error_dict); // log gramota error
-          } else {
-            handleQuery(res, STATUS_CODES.ok, botReplies.error_bot); // todo: add logging network error
-          }
-        });
-    })
-
-    .all(/./, (_, res: Response) => {
-      res
-        .status(STATUS_CODES.notFound)
-        .set({
-          'Content-Type': RESPONSE_CONTENT_TYPE,
-        })
-        .send(NOT_FOUND_RESPONSE);
-    })
     .use(errorHandler);
 
   app.listen(PORT, () => {

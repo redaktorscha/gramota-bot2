@@ -40,8 +40,10 @@ const STATUS_CODES = {
 const RESPONSE_CONTENT_TYPE = 'text/html; charset=utf-8';
 const PORT = Number(process.env.PORT) || 3000;
 const BOT_TOKEN = process.env.BOT_TOKEN || '';
+const TELEGRAM_API = `${process.env.TELEGRAM_API}${BOT_TOKEN}`;
 const DICT_URI = process.env.DICT_URI || '';
 const SECRET_ROUTE = `/${BOT_TOKEN}/`;
+const WEBHOOK_URL = `${process.env.SERVER_URL}${SECRET_ROUTE}`;
 const TEST_ROUTE = `/test/`;
 const TEST_RESPONSE = '<h1>Server up!<h1>';
 const NOT_FOUND_RESPONSE = 'Nothing here...';
@@ -51,6 +53,18 @@ const MAX_FETCH_RETRIES = 2;
 const GRAMOTA_ERROR = 'GramotaError';
 const NETWORK_ERROR = 'NetworkError';
 const UNKNOWN_ERROR = 'Something went wrong';
+
+const setupWebhook = async (next: NextFunction) => {
+  const response = await fetch(
+    `${TELEGRAM_API}/setWebhook?url=${WEBHOOK_URL}&drop_pending_updates=true`
+  ).catch((error: Error) => {
+    next(error);
+  });
+
+  if (response && !response.ok) {
+    return Promise.reject(new Error(UNKNOWN_ERROR));
+  }
+};
 
 // move to src/middleware
 const errorHandler = (

@@ -37,13 +37,14 @@ const STATUS_CODES = {
   notFound: 404,
 };
 
-const RESPONSE_CONTENT_TYPE = 'text/html; charset=utf-8';
+const RESPONSE_CONTENT_TYPE_HTML = {'Content-Type': 'text/html; charset=utf-8'};
+const RESPONSE_CONTENT_TYPE_JSON = {'Content-Type': 'application/json'};
 const PORT = Number(process.env.PORT) || 3000;
 const BOT_TOKEN = process.env.BOT_TOKEN || '';
 const TELEGRAM_API = `${process.env.TELEGRAM_API}${BOT_TOKEN}`;
 const DICT_URI = process.env.DICT_URI || '';
-const SECRET_ROUTE = `/${BOT_TOKEN}/`;
-const WEBHOOK_URL = `${process.env.SERVER_URL}${SECRET_ROUTE}`;
+const BOT_API = `/${BOT_TOKEN}/`;
+const WEBHOOK_URL = `${process.env.SERVER_URL}${BOT_API}`;
 const TEST_ROUTE = `/test/`;
 const TEST_RESPONSE = '<h1>Server up!<h1>';
 const NOT_FOUND_RESPONSE = 'Nothing here...';
@@ -53,16 +54,21 @@ const MAX_FETCH_RETRIES = 2;
 const GRAMOTA_ERROR = 'GramotaError';
 const NETWORK_ERROR = 'NetworkError';
 const UNKNOWN_ERROR = 'Something went wrong';
+const WEBHOOK_SETUP_ERROR = 'Error while setting up webhook';
 
-const setupWebhook = async (next: NextFunction) => {
-  const response = await fetch(
-    `${TELEGRAM_API}/setWebhook?url=${WEBHOOK_URL}&drop_pending_updates=true`
-  ).catch((error: Error) => {
-    next(error);
-  });
+const setupWebhook = async () => {
+  try {
+    const response = await fetch(
+      `${TELEGRAM_API}/setWebhook?url=${WEBHOOK_URL}&drop_pending_updates=true`
+    );
 
-  if (response && !response.ok) {
-    return Promise.reject(new Error(UNKNOWN_ERROR));
+    if (!response.ok) {
+      return Promise.reject(new Error(response.statusText));
+    }
+    const responseResult = await response.json();
+    console.log('webhook set: ', responseResult);
+  } catch (error: unknown) {
+    console.error(`${WEBHOOK_SETUP_ERROR}${JSON.stringify(error)}`);
   }
 };
 
@@ -76,24 +82,23 @@ const errorHandler = (
   console.error(error); // log error.stack
   const code =
     error instanceof CustomError ? error.statusCode : STATUS_CODES.errorServer;
-  handleQuery(res, code, error.message ?? UNKNOWN_ERROR); // log
+  res
+    .status(code)
+    .set(RESPONSE_CONTENT_TYPE_HTML)
+    .send(error.message ?? UNKNOWN_ERROR); // log
 };
 
 const testRouteHandler = (req: Request, res: Response) => {
   res
     .status(STATUS_CODES.ok)
-    .set({
-      'Content-Type': RESPONSE_CONTENT_TYPE,
-    })
+    .set(RESPONSE_CONTENT_TYPE_HTML)
     .send(TEST_RESPONSE);
 };
 
 const defaultRouteHandler = (req: Request, res: Response) => {
   res
     .status(STATUS_CODES.notFound)
-    .set({
-      'Content-Type': RESPONSE_CONTENT_TYPE,
-    })
+    .set(RESPONSE_CONTENT_TYPE_HTML)
     .send(NOT_FOUND_RESPONSE);
 };
 
@@ -132,13 +137,27 @@ const retry = (func: IFetchFunc, delay: number, maxRetries: number) => {
   };
 };
 
-const handleQuery = (response: Response, status: number, reply: string) => {
+// await fetch(TELEGRAM_API, {
+//     method: 'POST',
+//     headers: RESPONSE_CONTENT_TYPE_JSON,
+//     body: JSON.stringify({"method":"sendMessage","text":reply,"chat_id":id,"parse_mode":"HTML"})
+// });
+
+const handleQuery = (
+  response: Response,
+  reply: string,
+  userId: number,
+  status = 200
+) => {
   response
     .status(status)
-    .set({
-      'Content-Type': RESPONSE_CONTENT_TYPE,
-    })
-    .send(reply);
+    .set(RESPONSE_CONTENT_TYPE_JSON)
+    .json({
+      method: 'sendMessage',
+      text: reply,
+      chat_id: userId,
+      parse_mode: 'HTML',
+    });
 };
 
 const isBot = (user: User | undefined) => user && user.is_bot;
@@ -227,45 +246,51 @@ const webhookRouteHandler = (
   res: Response,
   next: NextFunction
 ) => {
+  console.log('req.body', req.body);
   const { message }: Update = req.body;
   if (!message || isBot(message.from)) {
-    handleQuery(res, STATUS_CODES.ok, botReplies.unsupported_query);
+    res
+      .status(STATUS_CODES.ok)
+      .set(RESPONSE_CONTENT_TYPE_HTML)
+      .send('');
     return;
   }
   console.log('got new message: ', message);
 
-  const { from, date, text, sticker } = message; //todo: date logging
+  const {
+    from,
+    date,
+    text,
+    sticker,
+    chat: { id },
+  } = message; //todo: date logging
 
   const username = from?.first_name ?? botReplies.default_username;
 
   if (sticker) {
-    handleQuery(res, STATUS_CODES.ok, getReplyToSticker());
+    handleQuery(res, getReplyToSticker(), id);
     return;
   }
 
   if (text && isCommand(text)) {
-    handleQuery(
-      res,
-      STATUS_CODES.ok,
-      getReplyToCommand(username, text.slice(1))
-    ); //slice '/'
+    handleQuery(res, getReplyToCommand(username, text.slice(1)), id); //slice '/'
     return;
   }
 
   if (!text || text.trim().length === 0) {
-    handleQuery(res, STATUS_CODES.ok, getReplyToEmpty());
+    handleQuery(res, getReplyToEmpty(), id);
     return;
   }
 
   const normalizedQueryWord = normalizeQuery(text);
 
   if (!isValidQuery(normalizedQueryWord)) {
-    handleQuery(res, STATUS_CODES.ok, botReplies.unsupported_query);
+    handleQuery(res, botReplies.unsupported_query, id);
     return;
   }
 
   getReplyToQueryWord(normalizedQueryWord)
-    .then((result) => handleQuery(res, STATUS_CODES.ok, result))
+    .then((result) => handleQuery(res, result, id))
     .catch((err: Error) => {
       next(err);
     });
@@ -279,15 +304,15 @@ const initServer = () => {
 
     .get(TEST_ROUTE, testRouteHandler)
 
-    .post(SECRET_ROUTE, webhookRouteHandler)
+    .post(BOT_API, webhookRouteHandler)
 
     .all(/./, defaultRouteHandler)
 
     .use(errorHandler);
 
-  app.listen(PORT, () => {
+  app.listen(PORT, async () => {
     console.log(`Listening at port ${PORT}, Process: ${process.pid}`);
-    // await setWebhook
+    await setupWebhook().catch(console.error);
   });
 };
 

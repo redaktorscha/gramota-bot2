@@ -194,27 +194,27 @@ const fixIncorrectMarkup = (s: string) => {
   return newStr.join('');
 };
 
-const handleSpecialChars = (s: string) => {
-  let str = s;
-  let i = str.indexOf(pageTargets.specialEntity);
+// const handleSpecialChars = (s: string) => {
+//   let str = s;
+//   let i = str.indexOf(pageTargets.specialEntity);
 
-  while (i !== -1) {
-    let j = i;
+//   while (i !== -1) {
+//     let j = i;
 
-    while (str[j] !== ';') {
-      j += 1;
-    }
-    str = `${str.slice(0, i)}${str.slice(j + 1)}`;
-    i = str.indexOf(pageTargets.specialEntity);
-  }
+//     while (str[j] !== ';') {
+//       j += 1;
+//     }
+//     str = `${str.slice(0, i)}${str.slice(j + 1)}`;
+//     i = str.indexOf(pageTargets.specialEntity);
+//   }
 
-  return str;
-};
+//   return str;
+// };
 
 const handleHTML = (s: string) => {
   const clearedString = removeUnsupportedTags(s);
-  const withoutEntities = handleSpecialChars(clearedString);
-  return fixIncorrectMarkup(withoutEntities);
+  // const withoutEntities = handleSpecialChars(clearedString);
+  return fixIncorrectMarkup(clearedString);
 };
 
 const cutAnswerString =

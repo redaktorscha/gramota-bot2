@@ -80,10 +80,10 @@ const errorHandler = (
   next: NextFunction
 ) => {
   console.error(error); // log error.stack
-  const code =
-    error instanceof CustomError ? error.statusCode : STATUS_CODES.errorServer;
+  // const code =
+  //   error instanceof CustomError ? error.statusCode : STATUS_CODES.errorServer;
   res
-    .status(code)
+    .status(STATUS_CODES.errorServer)
     .set(RESPONSE_CONTENT_TYPE_HTML)
     .send(error.message ?? UNKNOWN_ERROR); // log
 };
@@ -208,6 +208,7 @@ const getReplyToQueryWord = (word: string) => {
       decodeFetchResults(Buffer.from(arrayBuffer), TARGET_ENCODING)
     )
     .then((convertedString) => {
+      console.log('convertedString', convertedString);
       return parse(convertedString);
     });
 };
@@ -292,6 +293,10 @@ const webhookRouteHandler = (
   getReplyToQueryWord(normalizedQueryWord)
     .then((result) => handleQuery(res, result, id))
     .catch((err: Error) => {
+      if (err instanceof CustomError) {
+        handleQuery(res, botReplies.error_dict, id);
+        return;
+      }
       next(err);
     });
 };
